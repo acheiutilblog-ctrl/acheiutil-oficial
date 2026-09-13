@@ -1,0 +1,116 @@
+icon_svg = '''<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 500 500" width="500" height="500" fill="none">
+  <!-- Sombra suave para profundidade -->
+  <defs>
+    <filter id="logo-shadow" x="-10%" y="-10%" width="130%" height="130%">
+      <feDropShadow dx="0" dy="8" stdDeviation="12" flood-color="#073b5c" flood-opacity="0.12" />
+    </filter>
+  </defs>
+
+  <g filter="url(#logo-shadow)">
+    <!-- Cabo da Lupa (45 graus) -->
+    <line 
+      x1="285" y1="285" 
+      x2="375" y2="375" 
+      stroke="#06486D" 
+      stroke-width="40" 
+      stroke-linecap="round" 
+    />
+
+    <!-- Aro circular da Lupa -->
+    <circle 
+      cx="205" 
+      cy="205" 
+      r="120" 
+      stroke="#06486D" 
+      stroke-width="36" 
+      fill="none" 
+    />
+
+    <!-- Traço Esquerdo do Checkmark (Verde-azulado / Teal) -->
+    <line 
+      x1="155" y1="205" 
+      x2="210" y2="260" 
+      stroke="#028190" 
+      stroke-width="38" 
+      stroke-linecap="round" 
+    />
+
+    <!-- Traço Direito do Checkmark (Laranja vibrante que atravessa o aro) -->
+    <line 
+      x1="205" y1="255" 
+      x2="320" y2="140" 
+      stroke="#F07A1E" 
+      stroke-width="38" 
+      stroke-linecap="round" 
+    />
+  </g>
+</svg>'''
+
+full_svg = '''<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 620" width="600" height="620" fill="none">
+  <defs>
+    <style>
+      @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@800&amp;display=swap');
+      .brand-title {
+        font-family: 'Outfit', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        font-weight: 800;
+        font-size: 82px;
+        fill: #06486D;
+        letter-spacing: -2px;
+      }
+    </style>
+    <filter id="logo-shadow-full" x="-10%" y="-10%" width="130%" height="130%">
+      <feDropShadow dx="0" dy="8" stdDeviation="12" flood-color="#073b5c" flood-opacity="0.10" />
+    </filter>
+  </defs>
+
+  <!-- Simbolo -->
+  <g transform="translate(50, 10)" filter="url(#logo-shadow-full)">
+    <!-- Cabo da Lupa -->
+    <line 
+      x1="285" y1="285" 
+      x2="375" y2="375" 
+      stroke="#06486D" 
+      stroke-width="40" 
+      stroke-linecap="round" 
+    />
+
+    <!-- Aro circular da Lupa -->
+    <circle 
+      cx="205" 
+      cy="205" 
+      r="120" 
+      stroke="#06486D" 
+      stroke-width="36" 
+      fill="none" 
+    />
+
+    <!-- Traço Esquerdo Teal -->
+    <line 
+      x1="155" y1="205" 
+      x2="210" y2="260" 
+      stroke="#028190" 
+      stroke-width="38" 
+      stroke-linecap="round" 
+    />
+
+    <!-- Traço Direito Laranja -->
+    <line 
+      x1="205" y1="255" 
+      x2="320" y2="140" 
+      stroke="#F07A1E" 
+      stroke-width="38" 
+      stroke-linecap="round" 
+    />
+  </g>
+
+  <!-- Nome AcheiUtil -->
+  <text x="300" y="535" text-anchor="middle" class="brand-title">AcheiUtil</text>
+</svg>'''
+
+with open('public/logo-icon.svg', 'w') as f:
+    f.write(icon_svg)
+
+with open('public/logo-full.svg', 'w') as f:
+    f.write(full_svg)
+
+print("SVGs created cleanly.")

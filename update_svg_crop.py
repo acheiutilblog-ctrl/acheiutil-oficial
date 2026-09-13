@@ -1,0 +1,51 @@
+tight_icon_svg = '''<svg xmlns="http://www.w3.org/2000/svg" viewBox="55 55 350 350" width="500" height="500" fill="none">
+  <defs>
+    <filter id="logo-shadow" x="-10%" y="-10%" width="130%" height="130%">
+      <feDropShadow dx="0" dy="8" stdDeviation="12" flood-color="#073b5c" flood-opacity="0.12" />
+    </filter>
+  </defs>
+
+  <g filter="url(#logo-shadow)">
+    <!-- Cabo da Lupa (45 graus inferior direito) -->
+    <line 
+      x1="285" y1="285" 
+      x2="375" y2="375" 
+      stroke="#06486D" 
+      stroke-width="40" 
+      stroke-linecap="round" 
+    />
+
+    <!-- Aro circular da Lupa -->
+    <circle 
+      cx="205" 
+      cy="205" 
+      r="120" 
+      stroke="#06486D" 
+      stroke-width="36" 
+      fill="none" 
+    />
+
+    <!-- Traço Esquerdo do Checkmark (Verde-azulado / Teal) -->
+    <line 
+      x1="155" y1="205" 
+      x2="210" y2="260" 
+      stroke="#028190" 
+      stroke-width="38" 
+      stroke-linecap="round" 
+    />
+
+    <!-- Traço Direito do Checkmark (Laranja vibrante que atravessa o aro) -->
+    <line 
+      x1="205" y1="255" 
+      x2="320" y2="140" 
+      stroke="#F07A1E" 
+      stroke-width="38" 
+      stroke-linecap="round" 
+    />
+  </g>
+</svg>'''
+
+with open('public/logo-icon.svg', 'w') as f:
+    f.write(tight_icon_svg)
+
+print("Tight SVG written.")

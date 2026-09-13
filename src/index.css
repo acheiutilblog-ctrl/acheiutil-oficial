@@ -1,0 +1,577 @@
+@import "tailwindcss";
+
+/* Estilos elegantes para blocos de produtos recomendados / afiliados */
+.hostinger-affiliate-block-single-type,
+.hostinger-affiliate-block-list-with-desc {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  background-color: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 1rem;
+  padding: 1.25rem;
+  margin: 2rem 0;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -2px rgba(0, 0, 0, 0.05);
+  transition: all 0.2s ease-in-out;
+}
+
+@media (min-width: 640px) {
+  .hostinger-affiliate-block-single-type,
+  .hostinger-affiliate-block-list-with-desc {
+    flex-direction: row;
+    align-items: center;
+    padding: 1.5rem;
+  }
+}
+
+.hostinger-affiliate-block-single-type:hover,
+.hostinger-affiliate-block-list-with-desc:hover {
+  border-color: #cbd5e1;
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.08), 0 4px 6px -4px rgba(0, 0, 0, 0.05);
+  transform: translateY(-2px);
+}
+
+.hostinger-affiliate-block-single-type__image,
+.hostinger-affiliate-block-list-with-desc__image {
+  flex-shrink: 0;
+  width: 100%;
+  max-width: 180px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #f8fafc;
+  border-radius: 0.75rem;
+  padding: 0.75rem;
+  border: 1px solid #f1f5f9;
+}
+
+.hostinger-affiliate-block-single-type__image img,
+.hostinger-affiliate-block-list-with-desc__image img {
+  max-height: 160px;
+  width: auto;
+  object-fit: contain;
+  margin: 0 !important;
+  border: none !important;
+}
+
+.hostinger-affiliate-block-single-type__product-data,
+.hostinger-affiliate-block-list-with-desc__product-data {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 0.75rem;
+}
+
+.hostinger-affiliate-block-single-type__product-title h3,
+.hostinger-affiliate-block-list-with-desc__product-title h3 {
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: #0f172a;
+  line-height: 1.4;
+  margin: 0;
+}
+
+.hostinger-affiliate-block-single-type__product-title a,
+.hostinger-affiliate-block-list-with-desc__product-title a {
+  text-decoration: none !important;
+  color: inherit !important;
+}
+
+.hostinger-affiliate-block-single-type__product-title a:hover h3,
+.hostinger-affiliate-block-list-with-desc__product-title a:hover h3 {
+  color: #ea580c;
+}
+
+.hostinger-affiliate-block-single-type__product-description ul,
+.hostinger-affiliate-block-list-with-desc__product-description ul {
+  list-style: none !important;
+  padding: 0 !important;
+  margin: 0.5rem 0 !important;
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.hostinger-affiliate-block-single-type__product-description li,
+.hostinger-affiliate-block-list-with-desc__product-description li {
+  font-size: 0.875rem;
+  color: #475569;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.hostinger-affiliate-block-single-type__product-actions,
+.hostinger-affiliate-block-list-with-desc__product-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-top: 0.5rem;
+  padding-top: 0.75rem;
+  border-top: 1px solid #f1f5f9;
+}
+
+.hostinger-affiliate-block-single-type__product-price,
+.hostinger-affiliate-block-list-with-desc__product-price {
+  display: flex;
+  flex-direction: column;
+}
+
+.hostinger-affiliate-block-single-type__product-price .price-original {
+  font-size: 0.85rem;
+  color: #94a3b8;
+  text-decoration: line-through;
+}
+
+.hostinger-affiliate-block-single-type__product-price .price-current {
+  font-size: 1.35rem;
+  font-weight: 800;
+  color: #0f172a;
+}
+
+.hostinger-affiliate-block-single-type__product-amazon-button,
+.hostinger-affiliate-block-list-with-desc__product-amazon-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  background: linear-gradient(135deg, #f59e0b 0%, #ea580c 100%);
+  color: #ffffff !important;
+  font-weight: 700;
+  font-size: 0.95rem;
+  padding: 0.75rem 1.5rem;
+  border-radius: 9999px;
+  text-decoration: none !important;
+  box-shadow: 0 4px 12px rgba(234, 88, 12, 0.25);
+  transition: all 0.2s ease;
+}
+
+.hostinger-affiliate-block-single-type__product-amazon-button:hover,
+.hostinger-affiliate-block-list-with-desc__product-amazon-button:hover {
+  background: linear-gradient(135deg, #d97706 0%, #c2410c 100%);
+  box-shadow: 0 6px 16px rgba(234, 88, 12, 0.35);
+  transform: translateY(-1px);
+}
+
+/* AcheiUtil Article & Review Components */
+.au-bebedouro-article,
+.au-article {
+  max-width: 820px;
+  margin: 0 auto;
+  color: #334155;
+  font-size: 1.0625rem;
+  line-height: 1.75;
+}
+
+.au-bebedouro-article h2,
+.au-article h2 {
+  color: #0f172a;
+  font-size: 1.5rem;
+  font-weight: 800;
+  line-height: 1.35;
+  margin: 2.5rem 0 1rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 2px solid #f1f5f9;
+}
+
+.au-bebedouro-article p,
+.au-article p {
+  margin-bottom: 1.25rem;
+}
+
+.au-bebedouro-article ul,
+.au-article ul {
+  margin-bottom: 1.5rem;
+  padding-left: 1.5rem;
+  list-style-type: disc;
+}
+
+.au-bebedouro-article li,
+.au-article li {
+  margin-bottom: 0.5rem;
+}
+
+.au-transparency-box {
+  background-color: #fff7ed;
+  border-left: 4px solid #f97316;
+  border-radius: 0.5rem;
+  padding: 1rem 1.25rem;
+  font-size: 0.9375rem;
+  color: #9a3412;
+  margin-bottom: 1.5rem;
+}
+
+.au-lead-text {
+  font-size: 1.15rem;
+  line-height: 1.7;
+  color: #1e293b;
+}
+
+/* Deal Card Box */
+.au-deal-card {
+  background: linear-gradient(135deg, #ffffff 0%, #fffbf5 100%);
+  border: 2px solid #f97316;
+  border-radius: 1.25rem;
+  padding: 1.5rem;
+  margin: 2rem 0;
+  box-shadow: 0 10px 25px -5px rgba(249, 115, 22, 0.12), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  position: relative;
+  overflow: hidden;
+}
+
+.au-deal-badge,
+.au-deal-card-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  background: linear-gradient(135deg, #ea580c 0%, #dc2626 100%);
+  color: #ffffff;
+  font-size: 0.75rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  padding: 0.4rem 0.85rem;
+  border-radius: 9999px;
+  margin-bottom: 1.25rem;
+  box-shadow: 0 2px 8px rgba(220, 38, 38, 0.25);
+}
+
+.au-deal-body,
+.au-deal-card-content {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+@media (min-width: 640px) {
+  .au-deal-body,
+  .au-deal-card-content {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+  }
+}
+
+.au-deal-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.au-deal-title {
+  font-size: 1.25rem;
+  font-weight: 800;
+  color: #0f172a;
+  line-height: 1.35;
+  margin: 0;
+}
+
+.au-deal-desc {
+  font-size: 0.925rem;
+  color: #475569;
+  line-height: 1.5;
+  margin: 0.25rem 0 0.5rem 0;
+}
+
+.au-deal-pricing {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  margin: 0.5rem 0;
+}
+
+.au-old-price {
+  font-size: 0.875rem;
+  color: #94a3b8;
+  text-decoration: line-through;
+}
+
+.au-price-row,
+.au-current-price {
+  display: flex;
+  align-items: baseline;
+  gap: 0.35rem;
+}
+
+.au-currency {
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: #0f172a;
+}
+
+.au-amount {
+  font-size: 2.25rem;
+  font-weight: 900;
+  color: #0f172a;
+  line-height: 1;
+}
+
+.au-cents {
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: #0f172a;
+}
+
+.au-discount-tag {
+  background-color: #dcfce7;
+  color: #15803d;
+  font-size: 0.85rem;
+  font-weight: 800;
+  padding: 0.25rem 0.6rem;
+  border-radius: 0.375rem;
+  margin-left: 0.5rem;
+  align-self: center;
+}
+
+.au-installments,
+.au-installment-info {
+  font-size: 0.875rem;
+  color: #16a34a;
+  font-weight: 700;
+  margin: 0 !important;
+}
+
+.au-deal-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  margin-top: 0.25rem;
+}
+
+.au-full-tag {
+  font-size: 0.85rem;
+  color: #16a34a;
+  font-weight: 800;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.au-seller-guarantee {
+  font-size: 0.8rem;
+  color: #64748b;
+}
+
+.au-deal-action {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  align-items: stretch;
+  flex-shrink: 0;
+}
+
+@media (min-width: 640px) {
+  .au-deal-action {
+    align-items: center;
+    min-width: 240px;
+  }
+}
+
+.au-buy-btn,
+.au-btn-buy {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.6rem;
+  background: linear-gradient(135deg, #ea580c 0%, #f97316 100%);
+  color: #ffffff !important;
+  font-weight: 800;
+  font-size: 1.05rem;
+  padding: 0.95rem 1.6rem;
+  border-radius: 0.85rem;
+  text-decoration: none !important;
+  transition: all 0.2s ease;
+  box-shadow: 0 4px 14px rgba(234, 88, 12, 0.35);
+  text-align: center;
+  width: 100%;
+}
+
+.au-buy-btn:hover,
+.au-btn-buy:hover {
+  background: linear-gradient(135deg, #c2410c 0%, #ea580c 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(234, 88, 12, 0.45);
+}
+
+.au-btn-icon,
+.au-buy-btn svg,
+.au-btn-buy svg {
+  width: 20px !important;
+  height: 20px !important;
+  max-width: 20px !important;
+  max-height: 20px !important;
+  flex-shrink: 0 !important;
+  display: inline-block;
+  vertical-align: middle;
+}
+
+.au-safe-badge {
+  font-size: 0.775rem;
+  color: #64748b;
+  text-align: center;
+  display: block;
+}
+
+/* CTA Box intermediária */
+.au-cta-box {
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-left: 4px solid #f97316;
+  border-radius: 0.75rem;
+  padding: 1.25rem 1.5rem;
+  margin: 2rem 0;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+@media (min-width: 640px) {
+  .au-cta-box {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+  }
+}
+
+.au-cta-text strong {
+  display: block;
+  font-size: 1.05rem;
+  color: #0f172a;
+  margin-bottom: 0.25rem;
+}
+
+.au-cta-text p {
+  font-size: 0.9rem;
+  color: #475569;
+  margin: 0 !important;
+}
+
+.au-cta-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  white-space: nowrap;
+  background-color: #0f172a;
+  color: #ffffff !important;
+  font-weight: 700;
+  font-size: 0.925rem;
+  padding: 0.75rem 1.25rem;
+  border-radius: 0.5rem;
+  text-decoration: none !important;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+}
+
+.au-cta-btn:hover {
+  background-color: #ea580c;
+  transform: translateY(-1px);
+}
+
+/* Showcase photo */
+.au-photo-showcase {
+  margin: 2rem 0;
+  background: #f8fafc;
+  border-radius: 1rem;
+  overflow: hidden;
+  border: 1px solid #e2e8f0;
+}
+
+.au-featured-img {
+  width: 100%;
+  height: auto;
+  max-height: 420px;
+  object-fit: cover;
+  display: block;
+}
+
+.au-photo-caption {
+  display: block;
+  padding: 0.75rem 1rem;
+  font-size: 0.875rem;
+  color: #64748b;
+  background: #f8fafc;
+  text-align: center;
+  border-top: 1px solid #e2e8f0;
+}
+
+/* Comparison Table */
+.au-table-wrapper {
+  overflow-x: auto;
+  margin: 2rem 0;
+  border-radius: 0.75rem;
+  border: 1px solid #e2e8f0;
+}
+
+.au-compare-table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+  font-size: 0.9375rem;
+}
+
+.au-compare-table th {
+  background-color: #f1f5f9;
+  padding: 0.875rem 1rem;
+  font-weight: 700;
+  color: #1e293b;
+  border-bottom: 2px solid #cbd5e1;
+}
+
+.au-compare-table td {
+  padding: 0.875rem 1rem;
+  border-bottom: 1px solid #e2e8f0;
+  color: #475569;
+}
+
+.au-col-highlight {
+  background-color: #eff6ff;
+  color: #1d4ed8 !important;
+}
+
+/* Bottom CTA */
+.au-bottom-cta {
+  background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+  color: #ffffff;
+  border-radius: 1rem;
+  padding: 2.25rem 2rem;
+  text-align: center;
+  margin: 3rem 0;
+}
+
+.au-bottom-cta h3 {
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: #ffffff !important;
+  margin: 0 0 0.5rem !important;
+}
+
+.au-bottom-cta p {
+  color: #94a3b8;
+  margin-bottom: 1.5rem;
+}
+
+.au-btn-cta-big {
+  display: inline-block;
+  background: #f59e0b;
+  color: #0f172a !important;
+  font-size: 1.05rem;
+  font-weight: 800;
+  padding: 1rem 2rem;
+  border-radius: 9999px;
+  text-decoration: none !important;
+  transition: all 0.2s ease;
+  box-shadow: 0 4px 14px rgba(245, 158, 11, 0.4);
+}
+
+.au-btn-cta-big:hover {
+  background: #d97706;
+  color: #ffffff !important;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(245, 158, 11, 0.5);
+}
+
