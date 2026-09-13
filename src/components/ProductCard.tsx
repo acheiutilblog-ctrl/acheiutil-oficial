@@ -80,6 +80,13 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, onSelect }) =
           alt={product.title}
           loading="lazy"
           referrerPolicy="no-referrer"
+          onError={(e) => {
+            const target = e.currentTarget;
+            const backup = product.images?.[1] || 'https://images.unsplash.com/photo-1584269600464-37b1b58a9fe7?auto=format&fit=crop&w=800&q=80';
+            if (target.src !== backup) {
+              target.src = backup;
+            }
+          }}
           className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
         />
         <div className="absolute inset-0 bg-gradient-to-t from-slate-950/40 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex items-end p-3">
