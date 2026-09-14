@@ -10,6 +10,7 @@ import {
   Menu,
   ShoppingBag,
   BookOpen,
+  Share2,
 } from 'lucide-react';
 import { ProductCategory } from '../types';
 
@@ -58,16 +59,13 @@ export const Header: React.FC<HeaderProps> = ({
               {/* Prominent Brand Logo Image matching the banner */}
               <div className="relative flex items-center justify-center shrink-0">
                 <img
-                  src="/logo-icon.svg"
-                  alt="acheiutil.com"
-                  className="h-10 w-10 sm:h-12 sm:w-12 md:h-13 md:w-13 object-contain group-hover:scale-105 transition-transform"
+                  src="/logo-detective.png"
+                  alt="acheiutil.com - O Detetive de Achados"
+                  className="h-11 w-11 sm:h-13 sm:w-13 md:h-14 md:w-14 object-contain rounded-full drop-shadow-sm group-hover:scale-105 transition-transform"
                   onError={(e) => {
-                    // Fallback to stylized container if image is missing
+                    // Fallback to svg icon if needed
                     const target = e.currentTarget;
-                    target.style.display = 'none';
-                    if (target.nextElementSibling) {
-                      (target.nextElementSibling as HTMLElement).style.display = 'flex';
-                    }
+                    target.src = '/logo-icon.svg';
                   }}
                 />
                 <div className="hidden w-12 h-12 rounded-2xl bg-gradient-to-br from-blue-700 via-blue-800 to-blue-950 items-center justify-center text-white shadow-md shadow-blue-950/20 group-hover:scale-105 transition-transform">
@@ -113,6 +111,22 @@ export const Header: React.FC<HeaderProps> = ({
 
           {/* Actions */}
           <div className="flex items-center gap-2 sm:gap-3">
+            {/* Quick Share / Indicar Site Button */}
+            <button
+              id="header-indicar-btn"
+              onClick={() => {
+                const text = encodeURIComponent(
+                  'Olha esse site com análises sinceras de produtos antes de comprar no Mercado Livre: https://acheiutil.com'
+                );
+                window.open(`https://api.whatsapp.com/send?text=${text}`, '_blank');
+              }}
+              className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-orange-50 hover:bg-orange-100 text-orange-700 hover:text-orange-800 text-xs font-bold transition-all border border-orange-200/80 cursor-pointer shadow-2xs"
+              title="Indicar o site no WhatsApp"
+            >
+              <Share2 className="w-3.5 h-3.5 text-orange-600" />
+              <span>Indicar Site</span>
+            </button>
+
             {/* Mobile search toggle */}
             <button
               id="mobile-search-toggle"
@@ -216,6 +230,22 @@ export const Header: React.FC<HeaderProps> = ({
                 </button>
               );
             })}
+          </div>
+
+          <div className="mt-3 pt-3 border-t border-slate-100">
+            <button
+              onClick={() => {
+                const text = encodeURIComponent(
+                  'Olha esse site com análises sinceras de produtos antes de comprar no Mercado Livre: https://acheiutil.com'
+                );
+                window.open(`https://api.whatsapp.com/send?text=${text}`, '_blank');
+                setMobileMenuOpen(false);
+              }}
+              className="w-full flex items-center justify-center gap-2 py-2.5 px-3 rounded-xl bg-orange-50 text-orange-700 font-bold text-xs border border-orange-200"
+            >
+              <Share2 className="w-4 h-4 text-orange-600" />
+              <span>Indicar AcheiUtil no WhatsApp</span>
+            </button>
           </div>
         </div>
       )}

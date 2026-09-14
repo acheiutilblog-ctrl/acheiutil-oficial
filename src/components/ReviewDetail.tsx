@@ -24,6 +24,7 @@ import {
 import { Product } from '../types';
 import { updatePageSEO } from '../lib/seo';
 import { ProductCard } from './ProductCard';
+import { ShareRecommendationBox } from './ShareRecommendationBox';
 
 interface ReviewDetailProps {
   product: Product;
@@ -128,23 +129,23 @@ export const ReviewDetail: React.FC<ReviewDetailProps> = ({
             </span>
           </nav>
 
-          {/* Social share */}
+          {/* Social share & Indicar */}
           <div className="flex items-center gap-2">
             <button
               onClick={handleShareWhatsApp}
-              className="p-2 rounded-lg bg-emerald-50 text-emerald-700 hover:bg-emerald-100 transition-colors text-xs flex items-center gap-1 font-medium cursor-pointer"
-              title="Compartilhar no WhatsApp"
+              className="px-2.5 py-1.5 rounded-lg bg-emerald-50 hover:bg-emerald-100 text-emerald-700 transition-colors text-xs flex items-center gap-1.5 font-bold cursor-pointer border border-emerald-200/60"
+              title="Indicar pelo WhatsApp"
             >
-              <Share2 className="w-3.5 h-3.5" />
-              <span className="hidden sm:inline">WhatsApp</span>
+              <Share2 className="w-3.5 h-3.5 text-emerald-600" />
+              <span>Indicar no WhatsApp</span>
             </button>
             <button
               onClick={handleCopyLink}
-              className="p-2 rounded-lg bg-slate-100 text-slate-700 hover:bg-slate-200 transition-colors text-xs flex items-center gap-1 font-medium cursor-pointer"
+              className="px-2.5 py-1.5 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 transition-colors text-xs flex items-center gap-1 font-semibold cursor-pointer border border-slate-200"
               title="Copiar Link"
             >
               {copied ? <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" /> : <Copy className="w-3.5 h-3.5" />}
-              <span className="hidden sm:inline">{copied ? 'Copiado!' : 'Copiar'}</span>
+              <span>{copied ? 'Copiado!' : 'Copiar'}</span>
             </button>
           </div>
         </div>
@@ -407,6 +408,12 @@ export const ReviewDetail: React.FC<ReviewDetailProps> = ({
                 </div>
               )}
 
+              {/* Sidebar Indique este Produto */}
+              <ShareRecommendationBox
+                variant="compact"
+                productName={product.title}
+              />
+
             </div>
           </div>
 
@@ -598,6 +605,13 @@ export const ReviewDetail: React.FC<ReviewDetailProps> = ({
               </a>
             </div>
           )}
+
+          {/* Share / Indique o Produto ou o Site */}
+          <ShareRecommendationBox
+            productName={product.title}
+            title={`Gostou da análise do ${product.title}?`}
+            subtitle="Indique este achado para quem está pensando em comprar ou para o grupo da família/amigos!"
+          />
 
         </section>
 

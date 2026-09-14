@@ -9,7 +9,10 @@ import { AdminPanel } from './components/AdminPanel';
 import { AdminAuthModal } from './components/AdminAuthModal';
 import { FAQSection } from './components/FAQSection';
 import { Footer } from './components/Footer';
-import { Product, ProductCategory, SiteSettings } from './types';
+import { InstitutionalView } from './components/InstitutionalView';
+import { CookieConsent } from './components/CookieConsent';
+import { ShareRecommendationBox } from './components/ShareRecommendationBox';
+import { Product, ProductCategory, SiteSettings, InstitutionalTab } from './types';
 import { updatePageSEO } from './lib/seo';
 import { Zap, Flame, Sparkles, RefreshCw, Settings, LogOut, ArrowUp } from 'lucide-react';
 
@@ -37,7 +40,9 @@ export default function App() {
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
 
   // Navigation State
-  const [currentView, setCurrentView] = useState<'home' | 'review' | 'admin'>('home');
+  const [currentView, setCurrentView] = useState<'home' | 'review' | 'admin' | 'institutional'>('home');
+  const [institutionalTab, setInstitutionalTab] = useState<InstitutionalTab>('termos');
+  const [showCookieBannerForce, setShowCookieBannerForce] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
   const [currentCategory, setCurrentCategory] = useState<ProductCategory | 'todas' | 'guias'>('todas');
   const [searchTerm, setSearchTerm] = useState('');
@@ -53,30 +58,48 @@ export default function App() {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  // Check URL query parameters or hash (e.g. ?admin=true, ?admin, or #admin)
+  // Check URL query parameters or hash (e.g. ?admin=true, #admin, ?page=termos, #privacidade)
   useEffect(() => {
-    const checkAdminTrigger = () => {
+    const checkUrlTriggers = () => {
       const params = new URLSearchParams(window.location.search);
-      const hasAdminParam = params.has('admin') && (params.get('admin') === 'true' || params.get('admin') === '' || params.get('admin') === '1');
-      const hasAdminHash = window.location.hash.toLowerCase() === '#admin';
+      const hash = window.location.hash.toLowerCase().replace('#', '');
       
+      // Admin trigger
+      const hasAdminParam = params.has('admin') && (params.get('admin') === 'true' || params.get('admin') === '' || params.get('admin') === '1');
+      const hasAdminHash = hash === 'admin';
       if (hasAdminParam || hasAdminHash) {
         if (isAdminAuthenticated) {
           setCurrentView('admin');
         } else {
           setIsAuthModalOpen(true);
         }
+        return;
+      }
+
+      // Institutional pages triggers (e.g. ?page=privacidade or #termos)
+      const validTabs: InstitutionalTab[] = ['termos', 'privacidade', 'cookies', 'afiliados', 'sobre', 'contato'];
+      const pageParam = (params.get('page') || '').toLowerCase();
+      if (validTabs.includes(pageParam as InstitutionalTab)) {
+        setInstitutionalTab(pageParam as InstitutionalTab);
+        setCurrentView('institutional');
+        return;
+      }
+      if (validTabs.includes(hash as InstitutionalTab)) {
+        setInstitutionalTab(hash as InstitutionalTab);
+        setCurrentView('institutional');
+        return;
       }
     };
 
-    checkAdminTrigger();
-    window.addEventListener('popstate', checkAdminTrigger);
-    window.addEventListener('hashchange', checkAdminTrigger);
+    checkUrlTriggers();
+    window.addEventListener('popstate', checkUrlTriggers);
+    window.addEventListener('hashchange', checkUrlTriggers);
     return () => {
-      window.removeEventListener('popstate', checkAdminTrigger);
-      window.removeEventListener('hashchange', checkAdminTrigger);
+      window.removeEventListener('popstate', checkUrlTriggers);
+      window.removeEventListener('hashchange', checkUrlTriggers);
     };
   }, [isAdminAuthenticated]);
+
 
   // Fetch initial data from server API with static fallback for Vercel / Netlify
   const fetchProducts = async () => {
@@ -362,6 +385,19 @@ export default function App() {
         </div>
       ) : (
         <main className="flex-1">
+          {/* ================= VIEW: INSTITUTIONAL & LEGAL PAGES ================= */}
+          {currentView === 'institutional' && (
+            <InstitutionalView
+              initialTab={institutionalTab}
+              onBack={() => {
+                setCurrentView('home');
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+              }}
+              contactEmail={settings.contactEmail}
+              onOpenCookieBanner={() => setShowCookieBannerForce(true)}
+            />
+          )}
+
           {/* ================= VIEW: ADMIN PANEL ================= */}
           {currentView === 'admin' && (
             <AdminPanel
@@ -491,6 +527,13 @@ export default function App() {
                 </div>
               )}
 
+              {/* Indique o Site Banner */}
+              <ShareRecommendationBox
+                variant="banner"
+                title="Gostou do AcheiUtil? Indique para quem você gosta!"
+                subtitle="Economize o tempo e o bolso dos seus amigos e familiares enviando nossas dicas sinceras e achados testados."
+              />
+
               {/* Conversion FAQ Section on Homepage */}
               <FAQSection />
 
@@ -508,6 +551,24 @@ export default function App() {
         }}
         contactEmail={settings.contactEmail}
         onOpenAdmin={handleOpenAdmin}
+        onOpenInstitutional={(tab) => {
+          setInstitutionalTab(tab);
+          setCurrentView('institutional');
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+        }}
+        onOpenCookiesBanner={() => setShowCookieBannerForce(true)}
+      />
+
+      {/* LGPD Cookie Consent Banner */}
+      <CookieConsent
+        onOpenCookiesPolicy={() => {
+          setInstitutionalTab('cookies');
+          setCurrentView('institutional');
+          setShowCookieBannerForce(false);
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+        }}
+        forceShow={showCookieBannerForce}
+        onCloseForce={() => setShowCookieBannerForce(false)}
       />
 
       {/* Admin Authentication Modal */}

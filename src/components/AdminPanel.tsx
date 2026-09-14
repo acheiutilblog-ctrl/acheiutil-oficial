@@ -528,7 +528,7 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({
           >
             <ArrowLeft className="w-5 h-5" />
           </button>
-          <img src="/logo-icon.svg" alt="acheiutil.com" className="w-10 h-10 object-contain" onError={(e) => { e.currentTarget.style.display = 'none'; }} />
+          <img src="/logo-detective.png" alt="acheiutil.com" className="w-10 h-10 object-contain rounded-full shadow-2xs" onError={(e) => { e.currentTarget.src = '/logo-icon.svg'; }} />
           <div>
             <div className="flex items-center gap-2">
               <h1 className="text-xl sm:text-2xl font-black text-slate-950 font-['Outfit']">

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
   Star,
   Zap,
@@ -8,6 +8,8 @@ import {
   ShieldCheck,
   Award,
   BookOpen,
+  Share2,
+  Check,
 } from 'lucide-react';
 import { Product } from '../types';
 
@@ -17,8 +19,17 @@ interface ProductCardProps {
 }
 
 export const ProductCard: React.FC<ProductCardProps> = ({ product, onSelect }) => {
+  const [copied, setCopied] = useState(false);
   const mainImage = product.images?.[0] || 'https://images.unsplash.com/photo-1584269600464-37b1b58a9fe7?auto=format&fit=crop&w=800&q=80';
   const isArticle = product.isGuideOrArticle || product.price <= 0;
+
+  const handleQuickShare = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    const text = encodeURIComponent(
+      `Olha esse achado que vi no acheiutil.com: ${product.title}!\nhttps://acheiutil.com/?product=${product.id}`
+    );
+    window.open(`https://api.whatsapp.com/send?text=${text}`, '_blank');
+  };
 
   const formatBRL = (val: number) => {
     return val.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
@@ -190,7 +201,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, onSelect }) =
               )}
 
               {/* Action CTAs */}
-              <div className="grid grid-cols-2 gap-2">
+              <div className="grid grid-cols-2 gap-2 mb-2.5">
                 <button
                   id={`read-review-${product.id}`}
                   onClick={() => onSelect(product)}
@@ -210,6 +221,17 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, onSelect }) =
                   <ExternalLink className="w-3.5 h-3.5" />
                 </a>
               </div>
+
+              {/* Quick Indicar Button */}
+              <button
+                type="button"
+                onClick={handleQuickShare}
+                className="w-full py-1.5 px-2 rounded-lg text-[11px] font-semibold text-slate-500 hover:text-emerald-700 hover:bg-emerald-50 transition-colors flex items-center justify-center gap-1.5 cursor-pointer border border-transparent hover:border-emerald-200"
+                title="Indicar este achado no WhatsApp"
+              >
+                <Share2 className="w-3 h-3 text-emerald-600" />
+                <span>Indicar no WhatsApp</span>
+              </button>
             </>
           )}
         </div>

@@ -1,5 +1,7 @@
 export type ProductCategory = 'casa' | 'utilidades' | 'decoracao' | 'pet';
 
+export type InstitutionalTab = 'termos' | 'privacidade' | 'cookies' | 'afiliados' | 'sobre' | 'contato';
+
 export interface ProductSpecification {
   label: string;
   value: string;
