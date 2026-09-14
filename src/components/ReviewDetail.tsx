@@ -193,14 +193,13 @@ export const ReviewDetail: React.FC<ReviewDetailProps> = ({
             <div className="bg-white rounded-3xl p-3 sm:p-4 border border-slate-200 shadow-sm">
               <div className="relative aspect-4/3 bg-slate-50 rounded-2xl overflow-hidden flex items-center justify-center">
                 <img
-                  src={images[selectedImageIndex] || images[0] || 'https://images.unsplash.com/photo-1584269600464-37b1b58a9fe7?auto=format&fit=crop&w=800&q=80'}
+                  src={images[selectedImageIndex] || images[0] || '/logo.png'}
                   alt={product.title}
                   referrerPolicy="no-referrer"
                   onError={(e) => {
                     const target = e.currentTarget;
-                    const backup = images[1] || 'https://images.unsplash.com/photo-1584269600464-37b1b58a9fe7?auto=format&fit=crop&w=800&q=80';
-                    if (target.src !== backup) {
-                      target.src = backup;
+                    if (images[1] && target.src !== images[1]) {
+                      target.src = images[1];
                     }
                   }}
                   className="w-full h-full object-contain"

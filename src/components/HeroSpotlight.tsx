@@ -98,14 +98,13 @@ export const HeroSpotlight: React.FC<HeroSpotlightProps> = ({
                   className="relative aspect-16/10 rounded-xl overflow-hidden bg-slate-100 cursor-pointer"
                 >
                   <img
-                    src={featuredProduct.images?.[0] || 'https://images.unsplash.com/photo-1584269600464-37b1b58a9fe7?auto=format&fit=crop&w=800&q=80'}
+                    src={featuredProduct.images?.[0] || '/logo.png'}
                     alt={featuredProduct.title}
                     referrerPolicy="no-referrer"
                     onError={(e) => {
                       const target = e.currentTarget;
-                      const backup = featuredProduct.images?.[1] || 'https://images.unsplash.com/photo-1584269600464-37b1b58a9fe7?auto=format&fit=crop&w=800&q=80';
-                      if (target.src !== backup) {
-                        target.src = backup;
+                      if (featuredProduct.images?.[1] && target.src !== featuredProduct.images[1]) {
+                        target.src = featuredProduct.images[1];
                       }
                     }}
                     className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"

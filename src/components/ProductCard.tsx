@@ -82,9 +82,8 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, onSelect }) =
           referrerPolicy="no-referrer"
           onError={(e) => {
             const target = e.currentTarget;
-            const backup = product.images?.[1] || 'https://images.unsplash.com/photo-1584269600464-37b1b58a9fe7?auto=format&fit=crop&w=800&q=80';
-            if (target.src !== backup) {
-              target.src = backup;
+            if (product.images?.[1] && target.src !== product.images[1]) {
+              target.src = product.images[1];
             }
           }}
           className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
