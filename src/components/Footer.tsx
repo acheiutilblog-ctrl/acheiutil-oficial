@@ -5,11 +5,13 @@ import { ProductCategory } from '../types';
 interface FooterProps {
   onSelectCategory: (cat: ProductCategory | 'todas') => void;
   contactEmail?: string;
+  onOpenAdmin?: () => void;
 }
 
 export const Footer: React.FC<FooterProps> = ({
   onSelectCategory,
   contactEmail = 'contato@acheiutil.com',
+  onOpenAdmin,
 }) => {
   return (
     <footer id="main-footer" className="bg-slate-950 text-slate-300 pt-12 pb-8 border-t border-slate-800">
@@ -103,7 +105,19 @@ export const Footer: React.FC<FooterProps> = ({
 
         {/* Bottom bar */}
         <div className="pt-6 border-t border-slate-800/80 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-slate-500">
-          <p>© {new Date().getFullYear()} acheiutil.com — Todos os direitos reservados.</p>
+          <div className="flex items-center gap-3">
+            <p>© {new Date().getFullYear()} acheiutil.com — Todos os direitos reservados.</p>
+            {onOpenAdmin && (
+              <button
+                onClick={onOpenAdmin}
+                className="text-slate-600 hover:text-orange-400 text-[11px] transition-colors cursor-pointer flex items-center gap-1 opacity-60 hover:opacity-100"
+                title="Acesso Administrativo (Restrito com PIN)"
+              >
+                <span>•</span>
+                <span>Área Restrita</span>
+              </button>
+            )}
+          </div>
           <div>
             <span>Mercado Livre ® é marca registrada de MercadoLibre S.R.L.</span>
           </div>

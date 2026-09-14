@@ -257,20 +257,48 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({
     setNewImageUrl('');
   };
 
-  // Upload/Paste Photo File
-  const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+  // Upload/Paste Photo File directly to static server
+  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
     if (!files || files.length === 0) return;
 
     const file = files[0];
     const reader = new FileReader();
-    reader.onload = (event) => {
+    reader.onload = async (event) => {
       if (event.target?.result) {
-        setFormData((prev) => ({
-          ...prev,
-          images: [...(prev.images || []), event.target!.result as string],
-        }));
-        showNotice('success', 'Foto anexada com sucesso!');
+        const base64Str = event.target.result as string;
+        try {
+          showNotice('success', 'Enviando foto para o servidor...');
+          const uploadRes = await fetch('/api/upload', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              image: base64Str,
+              name: formData.title || 'produto'
+            })
+          });
+          const uploadData = await uploadRes.json();
+          if (uploadData.success && uploadData.url) {
+            setFormData((prev) => ({
+              ...prev,
+              images: [...(prev.images || []), uploadData.url],
+            }));
+            showNotice('success', 'Foto salva e adicionada com sucesso!');
+          } else {
+            // Fallback to base64 if server fails
+            setFormData((prev) => ({
+              ...prev,
+              images: [...(prev.images || []), base64Str],
+            }));
+            showNotice('success', 'Foto anexada!');
+          }
+        } catch (uploadErr) {
+          setFormData((prev) => ({
+            ...prev,
+            images: [...(prev.images || []), base64Str],
+          }));
+          showNotice('success', 'Foto anexada localmente!');
+        }
       }
     };
     reader.readAsDataURL(file);

@@ -20,9 +20,20 @@ const DATA_DIR = path.join(process.cwd(), "data");
 const PRODUCTS_FILE = path.join(DATA_DIR, "products.json");
 const SETTINGS_FILE = path.join(DATA_DIR, "settings.json");
 
+const PUBLIC_DATA_DIR = path.join(process.cwd(), "public", "data");
+const PUBLIC_PRODUCTS_FILE = path.join(PUBLIC_DATA_DIR, "products.json");
+const PUBLIC_SETTINGS_FILE = path.join(PUBLIC_DATA_DIR, "settings.json");
+const PUBLIC_PRODUCTS_IMG_DIR = path.join(process.cwd(), "public", "products");
+
 function ensureDataFiles() {
   if (!fs.existsSync(DATA_DIR)) {
     fs.mkdirSync(DATA_DIR, { recursive: true });
+  }
+  if (!fs.existsSync(PUBLIC_DATA_DIR)) {
+    fs.mkdirSync(PUBLIC_DATA_DIR, { recursive: true });
+  }
+  if (!fs.existsSync(PUBLIC_PRODUCTS_IMG_DIR)) {
+    fs.mkdirSync(PUBLIC_PRODUCTS_IMG_DIR, { recursive: true });
   }
 }
 
@@ -30,6 +41,10 @@ function readProducts(): Product[] {
   try {
     ensureDataFiles();
     if (!fs.existsSync(PRODUCTS_FILE)) {
+      if (fs.existsSync(PUBLIC_PRODUCTS_FILE)) {
+        const fallbackData = fs.readFileSync(PUBLIC_PRODUCTS_FILE, "utf-8");
+        return JSON.parse(fallbackData);
+      }
       return [];
     }
     const data = fs.readFileSync(PRODUCTS_FILE, "utf-8");
@@ -43,7 +58,9 @@ function readProducts(): Product[] {
 function writeProducts(products: Product[]): boolean {
   try {
     ensureDataFiles();
-    fs.writeFileSync(PRODUCTS_FILE, JSON.stringify(products, null, 2), "utf-8");
+    const jsonStr = JSON.stringify(products, null, 2);
+    fs.writeFileSync(PRODUCTS_FILE, jsonStr, "utf-8");
+    fs.writeFileSync(PUBLIC_PRODUCTS_FILE, jsonStr, "utf-8");
     return true;
   } catch (error) {
     console.error("Error writing products.json:", error);
@@ -55,6 +72,10 @@ function readSettings(): SiteSettings {
   try {
     ensureDataFiles();
     if (!fs.existsSync(SETTINGS_FILE)) {
+      if (fs.existsSync(PUBLIC_SETTINGS_FILE)) {
+        const fallbackData = fs.readFileSync(PUBLIC_SETTINGS_FILE, "utf-8");
+        return JSON.parse(fallbackData);
+      }
       return {
         siteName: "acheiutil.com",
         tagline: "Achados Úteis com Reviews Reais e os Menores Preços do Mercado Livre",
@@ -81,7 +102,9 @@ function readSettings(): SiteSettings {
 function writeSettings(settings: SiteSettings): boolean {
   try {
     ensureDataFiles();
-    fs.writeFileSync(SETTINGS_FILE, JSON.stringify(settings, null, 2), "utf-8");
+    const jsonStr = JSON.stringify(settings, null, 2);
+    fs.writeFileSync(SETTINGS_FILE, jsonStr, "utf-8");
+    fs.writeFileSync(PUBLIC_SETTINGS_FILE, jsonStr, "utf-8");
     return true;
   } catch (error) {
     console.error("Error writing settings.json:", error);
@@ -333,6 +356,43 @@ app.delete("/api/products/:id", (req, res) => {
     writeProducts(filtered);
     res.json({ success: true, message: "Produto excluído com sucesso!" });
   } catch (error: any) {
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
+
+// Image Upload endpoint (saves uploaded base64 images directly into /public/products/)
+app.post("/api/upload", (req, res) => {
+  try {
+    ensureDataFiles();
+    const { image, name } = req.body;
+    if (!image) {
+      return res.status(400).json({ success: false, message: "Nenhuma imagem enviada." });
+    }
+
+    let base64Data = image;
+    let ext = "jpg";
+
+    const match = image.match(/^data:image\/([a-zA-Z0-9+]+);base64,(.+)$/);
+    if (match) {
+      ext = match[1] === "jpeg" ? "jpg" : match[1];
+      base64Data = match[2];
+    }
+
+    const cleanName = (name || "upload")
+      .toLowerCase()
+      .replace(/[^a-z0-9_-]/g, "-")
+      .replace(/-+/g, "-")
+      .slice(0, 40);
+
+    const filename = `${cleanName}-${Date.now()}.${ext}`;
+    const filePath = path.join(PUBLIC_PRODUCTS_IMG_DIR, filename);
+
+    fs.writeFileSync(filePath, Buffer.from(base64Data, "base64"));
+    const publicUrl = `/products/${filename}`;
+
+    res.json({ success: true, url: publicUrl, filename });
+  } catch (error: any) {
+    console.error("Upload error:", error);
     res.status(500).json({ success: false, error: error.message });
   }
 });

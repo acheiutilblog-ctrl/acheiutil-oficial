@@ -61,6 +61,28 @@ export const ReviewDetail: React.FC<ReviewDetailProps> = ({
     updatePageSEO(product);
     setSelectedImageIndex(0);
     setOpenFaq(0); // Open first FAQ by default
+
+    // Clean up or replace broken images inside the review content container
+    const timer = setTimeout(() => {
+      const container = document.getElementById('review-article-body');
+      if (container) {
+        const imgs = container.querySelectorAll('img');
+        imgs.forEach((img) => {
+          img.onerror = () => {
+            if (product.images && product.images[0] && img.src !== product.images[0]) {
+              img.src = product.images[0];
+            } else {
+              img.style.display = 'none';
+              if (img.parentElement && img.parentElement.tagName === 'DIV') {
+                img.parentElement.style.display = 'none';
+              }
+            }
+          };
+        });
+      }
+    }, 100);
+
+    return () => clearTimeout(timer);
   }, [product]);
 
   const formatBRL = (val: number) => {
@@ -69,7 +91,7 @@ export const ReviewDetail: React.FC<ReviewDetailProps> = ({
 
   const images = product.images && product.images.length > 0
     ? product.images
-    : ['https://images.unsplash.com/photo-1584269600464-37b1b58a9fe7?auto=format&fit=crop&w=800&q=80'];
+    : ['/logo.png'];
 
   const handleCopyLink = () => {
     if (navigator.clipboard) {
@@ -401,6 +423,7 @@ export const ReviewDetail: React.FC<ReviewDetailProps> = ({
             <div className="prose prose-slate max-w-none text-slate-700 leading-relaxed space-y-4 text-base">
               {product.reviewContent.includes('<p') || product.reviewContent.includes('<h') || product.reviewContent.includes('<style') ? (
                 <div 
+                  id="review-article-body"
                   className="space-y-4 [&>h2]:text-xl [&>h2]:font-bold [&>h2]:text-slate-900 [&>h2]:mt-6 [&>h3]:text-lg [&>h3]:font-bold [&>h3]:text-slate-900 [&>h3]:mt-4 [&>p]:text-slate-700 [&>p]:leading-relaxed [&>ul]:list-disc [&>ul]:pl-5 [&>ul]:space-y-1.5 [&>ol]:list-decimal [&>ol]:pl-5 [&>ol]:space-y-1.5 [&>a]:text-orange-600 [&>a]:font-bold hover:[&>a]:underline [&_img]:rounded-2xl [&_img]:my-4 [&_img]:max-w-full [&_img]:border [&_img]:border-slate-200"
                   dangerouslySetInnerHTML={{ 
                     __html: product.reviewContent
