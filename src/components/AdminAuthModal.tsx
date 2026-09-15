@@ -98,13 +98,6 @@ export const AdminAuthModal: React.FC<AdminAuthModalProps> = ({
             )}
           </div>
 
-          <div className="p-3 bg-blue-50/70 rounded-xl border border-blue-100 text-[11px] text-blue-900 leading-relaxed">
-            <span className="font-bold flex items-center gap-1 text-blue-950 mb-0.5">
-              <ShieldCheck className="w-3.5 h-3.5 text-orange-500" /> Senha Padrão Inicial:
-            </span>
-            A senha de fábrica é <code className="bg-white px-1.5 py-0.5 rounded border border-blue-200 font-bold text-orange-600 font-mono">admin123</code>. Você pode alterá-la para a senha que preferir nas configurações do painel.
-          </div>
-
           <button
             type="submit"
             className="w-full py-3 px-4 rounded-xl bg-orange-500 hover:bg-orange-600 active:scale-[0.99] text-white font-bold text-sm shadow-md shadow-orange-500/25 transition-all flex items-center justify-center gap-2 cursor-pointer mt-1"

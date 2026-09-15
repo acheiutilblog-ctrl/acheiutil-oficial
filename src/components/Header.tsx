@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import {
   Home,
   Sparkles,
@@ -11,6 +11,7 @@ import {
   ShoppingBag,
   BookOpen,
   Share2,
+  Upload,
 } from 'lucide-react';
 import { ProductCategory } from '../types';
 
@@ -44,7 +45,7 @@ export const Header: React.FC<HeaderProps> = ({
   return (
     <header id="main-header" className="sticky top-0 z-40 bg-white/95 backdrop-blur-md border-b border-slate-200/80 shadow-xs transition-all">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-20 sm:h-22 gap-3">
+        <div className="flex items-center justify-between h-24 sm:h-26 md:h-28 gap-3 py-1.5">
           
           {/* Brand Logo & Slogan */}
           <div className="flex items-center gap-3">
@@ -54,32 +55,29 @@ export const Header: React.FC<HeaderProps> = ({
                 onGoHome();
                 setMobileMenuOpen(false);
               }}
-              className="flex items-center gap-2 sm:gap-2.5 group text-left cursor-pointer focus:outline-hidden py-1"
+              className="flex items-center gap-1.5 sm:gap-2 group text-left cursor-pointer focus:outline-hidden py-1"
             >
-              {/* Prominent Brand Logo Image matching the banner */}
+              {/* Logo do Sr. Detetive com fundo transparente e alta definição - aumentado proporcionalmente */}
               <div className="relative flex items-center justify-center shrink-0">
                 <img
-                  src="/logo-detective.png"
-                  alt="acheiutil.com - O Detetive de Achados"
-                  className="h-11 w-11 sm:h-13 sm:w-13 md:h-14 md:w-14 object-contain rounded-full drop-shadow-sm group-hover:scale-105 transition-transform"
+                  src="/logo-detective.png?v=6"
+                  alt="acheiutil.com"
+                  className="h-20 w-20 sm:h-22 sm:w-22 md:h-24 md:w-24 object-contain drop-shadow-sm group-hover:scale-105 transition-transform duration-300"
                   onError={(e) => {
-                    // Fallback to svg icon if needed
                     const target = e.currentTarget;
-                    target.src = '/logo-icon.svg';
+                    target.src = '/logo.png';
                   }}
                 />
-                <div className="hidden w-12 h-12 rounded-2xl bg-gradient-to-br from-blue-700 via-blue-800 to-blue-950 items-center justify-center text-white shadow-md shadow-blue-950/20 group-hover:scale-105 transition-transform">
-                  <ShoppingBag className="w-6 h-6 text-orange-400" />
-                </div>
               </div>
 
               <div className="flex flex-col justify-center">
-                <div className="flex items-center font-extrabold text-2xl sm:text-3xl tracking-tight text-blue-950 font-['Outfit'] leading-none">
+                <div className="flex items-center font-extrabold text-2xl sm:text-3xl md:text-4xl tracking-tight text-blue-950 font-['Outfit'] leading-none">
                   <span>achei</span>
                   <span className="text-orange-500">util</span>
                   <span className="text-slate-400 font-normal text-base sm:text-lg">.com</span>
                 </div>
-                <span className="text-xs sm:text-sm font-semibold text-blue-900 tracking-tight mt-1">
+                <span className="text-xs sm:text-sm font-semibold text-blue-900 tracking-tight mt-1 sm:mt-1.5 flex items-center gap-1.5">
+                  <span className="inline-block w-1.5 h-1.5 rounded-full bg-amber-500"></span>
                   Antes de comprar, descubra se vale a pena.
                 </span>
               </div>

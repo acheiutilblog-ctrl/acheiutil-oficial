@@ -397,6 +397,46 @@ app.post("/api/upload", (req, res) => {
   }
 });
 
+// Logo upload endpoint (updates public/logo-detective.png directly)
+app.post("/api/upload-logo", (req, res) => {
+  try {
+    const { image } = req.body;
+    if (!image) {
+      return res.status(400).json({ success: false, message: "Nenhuma imagem enviada." });
+    }
+    let base64Data = image;
+    const match = image.match(/^data:image\/([a-zA-Z0-9+]+);base64,(.+)$/);
+    if (match) {
+      base64Data = match[2];
+    }
+    const buf = Buffer.from(base64Data, "base64");
+    const pubDir = path.join(process.cwd(), "public");
+    fs.writeFileSync(path.join(pubDir, "logo-detective.png"), buf);
+    fs.writeFileSync(path.join(pubDir, "logo.png"), buf);
+    fs.writeFileSync(path.join(pubDir, "logo-sr-detetive.png"), buf);
+    fs.writeFileSync(path.join(pubDir, "logo-detetive.png"), buf);
+    fs.writeFileSync(path.join(pubDir, "logo_transparent.png"), buf);
+
+    const distDir = path.join(process.cwd(), "dist");
+    if (fs.existsSync(distDir)) {
+      fs.writeFileSync(path.join(distDir, "logo-detective.png"), buf);
+      fs.writeFileSync(path.join(distDir, "logo.png"), buf);
+      fs.writeFileSync(path.join(distDir, "logo-sr-detetive.png"), buf);
+      fs.writeFileSync(path.join(distDir, "logo-detetive.png"), buf);
+      fs.writeFileSync(path.join(distDir, "logo_transparent.png"), buf);
+    }
+
+    res.json({
+      success: true,
+      message: "Logo original salvo com sucesso!",
+      url: `/logo-detective.png?v=${Date.now()}`
+    });
+  } catch (error: any) {
+    console.error("Upload logo error:", error);
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
+
 // Settings: Get & Update
 app.get("/api/settings", (_req, res) => {
   try {

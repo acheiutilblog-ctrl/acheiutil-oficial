@@ -118,6 +118,37 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({
   // Settings form
   const [localSettings, setLocalSettings] = useState<SiteSettings>(settings);
   const [syncingWp, setSyncingWp] = useState(false);
+  const [uploadingLogo, setUploadingLogo] = useState(false);
+  const [logoTimestamp, setLogoTimestamp] = useState(Date.now());
+
+  const handleLogoFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    setUploadingLogo(true);
+    const reader = new FileReader();
+    reader.onload = async () => {
+      try {
+        const res = await fetch('/api/upload-logo', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ image: reader.result }),
+        });
+        const data = await res.json();
+        if (data.success) {
+          setLogoTimestamp(Date.now());
+          showNotice('success', '✅ Logo oficial do Detetive atualizado com sucesso em todo o site!');
+        } else {
+          showNotice('error', data.message || 'Erro ao atualizar logo.');
+        }
+      } catch (err: any) {
+        showNotice('error', err.message || 'Erro ao enviar logo.');
+      } finally {
+        setUploadingLogo(false);
+      }
+    };
+    reader.readAsDataURL(file);
+  };
 
   const showNotice = (type: 'success' | 'error', message: string) => {
     setNotification({ type, message });
@@ -528,7 +559,7 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({
           >
             <ArrowLeft className="w-5 h-5" />
           </button>
-          <img src="/logo-detective.png" alt="acheiutil.com" className="w-10 h-10 object-contain rounded-full shadow-2xs" onError={(e) => { e.currentTarget.src = '/logo-icon.svg'; }} />
+          <img src="/logo-detective.png?v=6" alt="acheiutil.com" className="w-12 h-12 object-contain drop-shadow-xs" onError={(e) => { e.currentTarget.src = '/logo.png'; }} />
           <div>
             <div className="flex items-center gap-2">
               <h1 className="text-xl sm:text-2xl font-black text-slate-950 font-['Outfit']">
@@ -1499,7 +1530,55 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({
 
       {/* ================= TAB 4: SETTINGS & AFFILIATE ================= */}
       {activeTab === 'settings' && (
-        <form onSubmit={handleSaveSettingsSubmit} className="mt-6 flex flex-col gap-6 max-w-3xl">
+        <div className="mt-6 flex flex-col gap-6 max-w-3xl">
+
+          {/* Card de Gerenciamento do Logotipo Oficial */}
+          <div className="bg-white rounded-2xl p-6 border border-slate-200 shadow-xs">
+            <div className="flex items-start justify-between gap-4 mb-4">
+              <div>
+                <h3 className="text-base font-bold text-slate-900 flex items-center gap-2">
+                  <ImageIcon className="w-5 h-5 text-orange-500" />
+                  Logotipo Oficial do Site (Sr. Detetive)
+                </h3>
+                <p className="text-xs text-slate-500 mt-1">
+                  Faça o upload do seu arquivo original (ex: <code>logo fundo transparente detetive grisalho.png</code>). Ele substituirá imediatamente o logo em todo o site (topo, banner e rodapé) com fundo transparente e sem nenhuma alteração.
+                </p>
+              </div>
+            </div>
+
+            <div className="flex flex-col sm:flex-row items-center gap-6 p-4 rounded-xl bg-slate-50 border border-slate-200/80">
+              <div className="relative shrink-0 flex items-center justify-center w-24 h-24 sm:w-28 sm:h-28 rounded-2xl bg-white border border-slate-200 p-2 shadow-xs">
+                <img
+                  src={`/logo-detective.png?t=${logoTimestamp}`}
+                  alt="Logo Atual"
+                  className="w-full h-full object-contain"
+                  onError={(e) => {
+                    e.currentTarget.src = '/logo.png';
+                  }}
+                />
+              </div>
+
+              <div className="flex-1 w-full flex flex-col gap-3">
+                <label className="flex items-center justify-center gap-2.5 px-4 py-3 rounded-xl bg-orange-500 hover:bg-orange-600 text-white font-bold text-sm cursor-pointer shadow-sm hover:shadow transition-all w-full sm:w-auto">
+                  <Upload className="w-4 h-4" />
+                  <span>{uploadingLogo ? 'Enviando e salvando logo...' : 'Selecionar e Colocar Meu Logo (PNG)'}</span>
+                  <input
+                    type="file"
+                    accept="image/png,image/jpeg,image/webp"
+                    className="hidden"
+                    disabled={uploadingLogo}
+                    onChange={handleLogoFileChange}
+                  />
+                </label>
+                <div className="text-[11px] text-slate-500 flex items-center gap-1.5">
+                  <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
+                  <span>Aceita PNG com fundo transparente. Substituição instantânea 100% fiel ao seu arquivo.</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <form onSubmit={handleSaveSettingsSubmit} className="flex flex-col gap-6">
           
           <div className="bg-white rounded-2xl p-6 border border-slate-200 shadow-xs">
             <h3 className="text-base font-bold text-slate-900 mb-4 flex items-center gap-2">
@@ -1637,6 +1716,7 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({
           </div>
 
         </form>
+      </div>
       )}
 
       {/* ================= TAB 5: WORDPRESS & HOSTING EXPORT ================= */}

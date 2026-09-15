@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { ShieldCheck, Heart, Mail, Sparkles, Home, Palette, FileText, Cookie, Handshake, Users, Sliders, Share2, MessageSquare, Check, Copy } from 'lucide-react';
+import { ShieldCheck, Heart, Mail, Sparkles, Home, Palette, FileText, Cookie, Handshake, Users, Sliders, Share2, MessageSquare, Check, Copy, Lock } from 'lucide-react';
 import { ProductCategory, InstitutionalTab } from '../types';
 
 interface FooterProps {
@@ -34,14 +34,14 @@ export const Footer: React.FC<FooterProps> = ({
           
           {/* Brand Info (4 cols) */}
           <div className="lg:col-span-4 flex flex-col items-start">
-            <div className="flex items-center gap-3 mb-2">
-              <div className="bg-slate-900 p-1 rounded-2xl border border-slate-800 shadow-xs shrink-0 flex items-center justify-center">
+            <div className="flex items-center gap-3 mb-5">
+              <div className="shrink-0 flex items-center justify-center">
                 <img
-                  src="/logo-detective.png"
+                  src="/logo-detective.png?v=6"
                   alt="acheiutil.com"
-                  className="h-11 w-11 sm:h-12 sm:w-12 object-contain rounded-full"
+                  className="h-16 w-16 sm:h-20 sm:w-20 object-contain drop-shadow-lg"
                   onError={(e) => {
-                    e.currentTarget.src = '/logo-icon.svg';
+                    e.currentTarget.src = '/logo.png';
                   }}
                 />
               </div>
@@ -234,16 +234,18 @@ export const Footer: React.FC<FooterProps> = ({
 
         {/* Bottom bar */}
         <div className="pt-6 border-t border-slate-800/80 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-slate-500">
-          <div className="flex flex-wrap items-center gap-3">
-            <p>© {new Date().getFullYear()} acheiutil.com — Todos os direitos reservados.</p>
+          <div className="flex flex-wrap items-center gap-2">
+            <p className="flex items-center">
+              © {new Date().getFullYear()} acheiutil.com — Todos os direitos reservados.
+            </p>
             {onOpenAdmin && (
               <button
                 onClick={onOpenAdmin}
-                className="text-slate-600 hover:text-orange-400 text-[11px] transition-colors cursor-pointer flex items-center gap-1 opacity-60 hover:opacity-100"
-                title="Acesso Administrativo (Restrito com PIN)"
+                className="opacity-15 hover:opacity-100 text-slate-500 hover:text-orange-400 transition-opacity cursor-pointer p-1"
+                title="Acesso Administrativo"
+                aria-label="Acesso Administrativo"
               >
-                <span>•</span>
-                <span>Área Restrita</span>
+                <Lock className="w-2.5 h-2.5" />
               </button>
             )}
           </div>

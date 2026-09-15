@@ -92,11 +92,26 @@ export default function App() {
     };
 
     checkUrlTriggers();
+    
+    // Keyboard shortcut for site administrator: Ctrl+Shift+A or Cmd+Shift+A
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if ((e.ctrlKey || e.metaKey) && e.shiftKey && (e.key === 'a' || e.key === 'A')) {
+        e.preventDefault();
+        if (isAdminAuthenticated) {
+          setCurrentView('admin');
+        } else {
+          setIsAuthModalOpen(true);
+        }
+      }
+    };
+
     window.addEventListener('popstate', checkUrlTriggers);
     window.addEventListener('hashchange', checkUrlTriggers);
+    window.addEventListener('keydown', handleKeyDown);
     return () => {
       window.removeEventListener('popstate', checkUrlTriggers);
       window.removeEventListener('hashchange', checkUrlTriggers);
+      window.removeEventListener('keydown', handleKeyDown);
     };
   }, [isAdminAuthenticated]);
 
@@ -531,7 +546,7 @@ export default function App() {
               <ShareRecommendationBox
                 variant="banner"
                 title="Gostou do AcheiUtil? Indique para quem você gosta!"
-                subtitle="Economize o tempo e o bolso dos seus amigos e familiares enviando nossas dicas sinceras e achados testados."
+                subtitle="Economize o tempo e o bolso dos seus amigos e familiares enviando nossas dicas sinceras e achados selecionados."
               />
 
               {/* Conversion FAQ Section on Homepage */}
@@ -579,12 +594,12 @@ export default function App() {
         expectedPin={settings.adminPin || 'admin123'}
       />
 
-      {/* Floating Back to Top Button */}
+      {/* Floating Back to Top Button - Posicionado mais acima */}
       {showScrollTop && (
         <button
           id="btn-scroll-to-top"
           onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
-          className="fixed bottom-6 right-6 z-40 w-11 h-11 sm:w-12 sm:h-12 rounded-full bg-blue-900 hover:bg-orange-500 text-white shadow-lg shadow-blue-950/25 flex items-center justify-center transition-all duration-300 hover:scale-110 active:scale-95 cursor-pointer border border-white/20"
+          className="fixed bottom-10 right-6 sm:bottom-12 sm:right-8 z-40 w-11 h-11 sm:w-12 sm:h-12 rounded-full bg-blue-900 hover:bg-orange-500 text-white shadow-xl shadow-blue-950/30 flex items-center justify-center transition-all duration-300 hover:scale-110 active:scale-95 cursor-pointer border border-white/20"
           title="Subir para o topo"
           aria-label="Voltar ao topo da página"
         >

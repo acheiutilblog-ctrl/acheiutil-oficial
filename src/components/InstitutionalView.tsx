@@ -557,7 +557,7 @@ export const InstitutionalView: React.FC<InstitutionalViewProps> = ({
                   Fale Conosco
                 </h1>
                 <p className="text-xs sm:text-sm text-slate-500 mt-1">
-                  Tem alguma dúvida sobre uma análise, sugestão de produto para testarmos ou pedido de suporte? Estamos à disposição.
+                  Tem alguma dúvida sobre uma análise, sugestão de produto para investigarmos ou pedido de suporte? Estamos à disposição.
                 </p>
               </div>
 

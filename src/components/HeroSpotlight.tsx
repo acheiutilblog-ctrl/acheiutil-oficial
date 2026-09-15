@@ -23,17 +23,18 @@ export const HeroSpotlight: React.FC<HeroSpotlightProps> = ({
           
           {/* Headline & Value Proposition (7 cols) */}
           <div className="lg:col-span-7 flex flex-col items-start">
-            <div className="inline-flex items-center gap-2 bg-blue-800/80 border border-blue-700/60 rounded-full px-3.5 py-1 text-xs font-semibold text-blue-200 mb-4 shadow-xs">
-              <Sparkles className="w-3.5 h-3.5 text-orange-400" />
-              <span>Curadoria Real • Casa, Decoração, Utilidades & Pet</span>
+            <div className="mb-4 w-full">
+              <div className="inline-flex items-center gap-2 bg-blue-900/80 border border-blue-600/40 rounded-full px-4 py-1.5 mb-3.5 shadow-xs text-xs sm:text-sm font-semibold text-blue-200">
+                <Sparkles className="w-3.5 h-3.5 text-amber-400" />
+                <span>Curadoria Real • Casa, Decoração, Utilidades & Pet</span>
+              </div>
+              <h1 className="text-2xl sm:text-3xl lg:text-4.5xl font-black font-['Outfit'] tracking-tight leading-tight">
+                Antes de comprar, <span className="text-orange-400">descubra se vale a pena.</span>
+              </h1>
             </div>
 
-            <h1 className="text-3xl sm:text-4xl lg:text-5xl font-black font-['Outfit'] tracking-tight leading-tight mb-4">
-              Antes de comprar, <span className="text-orange-400">descubra se vale a pena.</span>
-            </h1>
-
             <p className="text-sm sm:text-base text-blue-100/90 leading-relaxed mb-4 max-w-xl">
-              Pesquiso produtos para casa, decoração e pet no <b>Mercado Livre</b> e escrevo o que encontrei: os prós, os contras e o que os compradores realmente dizem.
+              Investigo produtos para casa, decoração e pet no <b>Mercado Livre</b> e escrevo o que encontrei: os prós, os contras e o que os compradores realmente dizem.
             </p>
 
             {/* Transparency Note */}
