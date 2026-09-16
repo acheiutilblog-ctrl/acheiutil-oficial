@@ -799,7 +799,18 @@ const handleRssFeed = (_req: any, res: any) => {
           ? rawImg
           : `${baseUrl}${rawImg.startsWith("/") ? "" : "/"}${rawImg}`;
         const itemDate = p.createdAt ? new Date(p.createdAt).toUTCString() : pubDate;
-        const cleanSummary = (p.summary || p.subtitle || p.title || "")
+        
+        let rawDesc = (p.summary || p.subtitle || "").trim();
+        rawDesc = rawDesc.replace(/^Transparência:[\s\S]*?(nem o veredicto da análise\.|adicional para você\.)\s*/i, "");
+        rawDesc = rawDesc.replace(/^Isso não altera os critérios nem o veredicto da análise\.\s*/i, "");
+        rawDesc = rawDesc.replace(/^Transparência:[\s\S]*?\.\s*/i, "");
+        rawDesc = rawDesc.replace(/^Aviso:[\s\S]*?\.\s*/i, "");
+        rawDesc = rawDesc.replace(/\[…\]|\[\.\.\.\]/g, "").trim();
+
+        const priceText = p.price ? `Por R$ ${Number(p.price).toFixed(2)} no Mercado Livre.` : "";
+        const bodyDesc = rawDesc || `Confira a análise completa e veredito do produto no AcheiUtil.`;
+
+        const socialCaption = `${p.title} - ${priceText} ${bodyDesc} Antes de comprar, descubra se vale a pena.`
           .replace(/[<>&"]/g, (c) => ({ "<": "&lt;", ">": "&gt;", "&": "&amp;", '"': "&quot;" }[c] || c));
 
         return `
@@ -809,7 +820,7 @@ const handleRssFeed = (_req: any, res: any) => {
       <guid isPermaLink="true">${itemUrl}</guid>
       <pubDate>${itemDate}</pubDate>
       <category><![CDATA[${p.category || "Geral"}]]></category>
-      <description><![CDATA[${cleanSummary} - Por R$ ${Number(p.price || 0).toFixed(2)} no Mercado Livre. Confira a análise do Sr. Detetive no AcheiUtil.]]></description>
+      <description><![CDATA[${socialCaption}]]></description>
       <enclosure url="${imageUrl}" type="image/jpeg" length="0" />
       <media:content url="${imageUrl}" medium="image" />
     </item>`;
