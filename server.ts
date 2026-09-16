@@ -397,7 +397,7 @@ app.post("/api/upload", (req, res) => {
   }
 });
 
-// Favicon explicit endpoint
+// Favicon explicit endpoints
 app.get("/favicon.ico", (_req, res) => {
   const icoPath = path.join(process.cwd(), "public", "favicon.ico");
   if (fs.existsSync(icoPath)) {
@@ -408,6 +408,16 @@ app.get("/favicon.ico", (_req, res) => {
   const pngPath = path.join(process.cwd(), "public", "logo-detective.png");
   res.setHeader("Content-Type", "image/png");
   res.sendFile(pngPath);
+});
+
+app.get("/favicon.svg", (_req, res) => {
+  const svgPath = path.join(process.cwd(), "public", "favicon.svg");
+  if (fs.existsSync(svgPath)) {
+    res.setHeader("Content-Type", "image/svg+xml");
+    res.setHeader("Cache-Control", "no-cache, must-revalidate");
+    return res.sendFile(svgPath);
+  }
+  res.status(404).end();
 });
 
 // Logo upload endpoint (updates public/logo-detective.png directly)

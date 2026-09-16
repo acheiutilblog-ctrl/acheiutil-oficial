@@ -60,9 +60,9 @@ export const Header: React.FC<HeaderProps> = ({
               {/* Logo do Sr. Detetive com fundo transparente e alta definição - aumentado proporcionalmente */}
               <div className="relative flex items-center justify-center shrink-0">
                 <img
-                  src="/logo-detective.png?v=6"
+                  src="/logo-detective.png?v=20260916-max"
                   alt="acheiutil.com"
-                  className="h-20 w-20 sm:h-22 sm:w-22 md:h-24 md:w-24 object-contain drop-shadow-sm group-hover:scale-105 transition-transform duration-300"
+                  className="h-22 w-22 sm:h-24 sm:w-24 md:h-28 md:w-28 object-contain drop-shadow-sm group-hover:scale-105 transition-transform duration-300"
                   onError={(e) => {
                     const target = e.currentTarget;
                     target.src = '/logo.png';

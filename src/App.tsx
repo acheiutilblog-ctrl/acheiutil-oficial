@@ -265,27 +265,33 @@ export default function App() {
     init();
   }, []);
 
-  // Ensure browser tab favicon strictly uses the new detective logo
+  // Ensure browser tab favicon strictly uses the maximized detective logo
   useEffect(() => {
     const applyFavicon = () => {
       const timestamp = Date.now();
-      const iconUrl = `/logo-detective.png?v=${timestamp}`;
       
-      const setLink = (selector: string, rel: string, type?: string) => {
+      const setLink = (selector: string, rel: string, href: string, type?: string, sizes?: string) => {
         let link = document.querySelector(selector) as HTMLLinkElement | null;
         if (!link) {
           link = document.createElement('link');
           link.rel = rel;
           if (type) link.type = type;
+          if (sizes) link.sizes = sizes;
           document.head.appendChild(link);
         }
-        link.href = iconUrl;
+        link.href = `${href}?v=${timestamp}`;
       };
 
-      setLink("link[rel='icon'][sizes='32x32']", "icon", "image/png");
-      setLink("link[rel='icon']:not([sizes])", "icon", "image/png");
-      setLink("link[rel='shortcut icon']", "shortcut icon");
-      setLink("link[rel='apple-touch-icon']", "apple-touch-icon");
+      // Set vector SVG for modern browsers (retina sharp, edge-to-edge max size)
+      setLink("link[rel='icon'][type='image/svg+xml']", "icon", "/favicon.svg", "image/svg+xml");
+      // Set high-res PNG favicons
+      setLink("link[rel='icon'][sizes='48x48']", "icon", "/favicon-48x48.png", "image/png", "48x48");
+      setLink("link[rel='icon'][sizes='32x32']", "icon", "/favicon-32x32.png", "image/png", "32x32");
+      setLink("link[rel='icon'][sizes='16x16']", "icon", "/favicon-16x16.png", "image/png", "16x16");
+      setLink("link[rel='icon'][sizes='192x192']", "icon", "/favicon-192x192.png", "image/png", "192x192");
+      setLink("link[rel='icon']:not([sizes]):not([type='image/svg+xml'])", "icon", "/favicon-32x32.png", "image/png");
+      setLink("link[rel='shortcut icon']", "shortcut icon", "/favicon.ico");
+      setLink("link[rel='apple-touch-icon']", "apple-touch-icon", "/apple-touch-icon.png", undefined, "180x180");
     };
 
     applyFavicon();
