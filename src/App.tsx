@@ -59,13 +59,83 @@ export default function App() {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  // Check URL query parameters or hash (e.g. ?admin=true, #admin, ?page=termos, #privacidade)
+  // Check URL path, query parameters or hash (e.g. /cama-com-gavetas-..., ?product=wp-5292, ?admin=true, #admin, ?page=termos)
   useEffect(() => {
     const checkUrlTriggers = () => {
       const params = new URLSearchParams(window.location.search);
       const hash = window.location.hash.toLowerCase().replace('#', '');
       
-      // Admin trigger
+      // Clean path: e.g. "/cama-com-gavetas-a-nova-tendencia-que-pode-substituir-a-cama-box-em-2026/" -> "cama-com-gavetas-a-nova-tendencia-que-pode-substituir-a-cama-box-em-2026"
+      let rawPath = '';
+      try {
+        rawPath = decodeURIComponent(window.location.pathname).replace(/^\/+|\/+$/g, '').trim().toLowerCase();
+      } catch {
+        rawPath = window.location.pathname.replace(/^\/+|\/+$/g, '').trim().toLowerCase();
+      }
+
+      const validTabs: InstitutionalTab[] = ['termos', 'privacidade', 'cookies', 'afiliados', 'sobre', 'contato'];
+
+      // 1. Institutional pages by path (e.g. /termos or /privacidade)
+      if (validTabs.includes(rawPath as InstitutionalTab)) {
+        setInstitutionalTab(rawPath as InstitutionalTab);
+        setCurrentView('institutional');
+        return;
+      }
+
+      // 2. Admin trigger by path (/admin)
+      if (rawPath === 'admin') {
+        if (isAdminAuthenticated) {
+          setCurrentView('admin');
+        } else {
+          setIsAuthModalOpen(true);
+        }
+        return;
+      }
+
+      // 3. Product trigger by clean URL path (matching WordPress permalinks!)
+      if (rawPath && products.length > 0) {
+        const cleanSlug = rawPath.replace(/^(produto|review|analise)\//, '');
+        const foundByPath = products.find((p) => {
+          const pSlug = (p.slug || '').toLowerCase();
+          const pId = (p.id || '').toLowerCase();
+          return (
+            pSlug === cleanSlug ||
+            pId === cleanSlug ||
+            pSlug === rawPath ||
+            pId === rawPath ||
+            (pSlug && pSlug.replace(/^https-acheiutil-com-/, '') === cleanSlug) ||
+            (pSlug && cleanSlug.includes(pSlug)) ||
+            (pSlug && pSlug.includes(cleanSlug) && cleanSlug.length > 8)
+          );
+        });
+
+        if (foundByPath) {
+          setSelectedProduct(foundByPath);
+          setCurrentView('review');
+          updatePageSEO(foundByPath);
+          return;
+        }
+      }
+
+      // 4. Product trigger by query: e.g. ?product=wp-5292 or ?p=wp-5292
+      const productId = params.get('product') || params.get('p') || params.get('prod');
+      if (productId && products.length > 0) {
+        const cleanId = productId.toLowerCase();
+        const foundByQuery = products.find(
+          (p) => 
+            p.id.toLowerCase() === cleanId || 
+            (p.slug && p.slug.toLowerCase() === cleanId) ||
+            (p.slug && p.slug.toLowerCase().includes(cleanId))
+        );
+        if (foundByQuery) {
+          setSelectedProduct(foundByQuery);
+          setCurrentView('review');
+          updatePageSEO(foundByQuery);
+          return;
+        }
+      }
+
+      // 5. Admin trigger by query or hash (?admin=true, #admin)
       const hasAdminParam = params.has('admin') && (params.get('admin') === 'true' || params.get('admin') === '' || params.get('admin') === '1');
       const hasAdminHash = hash === 'admin';
       if (hasAdminParam || hasAdminHash) {
@@ -77,8 +147,7 @@ export default function App() {
         return;
       }
 
-      // Institutional pages triggers (e.g. ?page=privacidade or #termos)
-      const validTabs: InstitutionalTab[] = ['termos', 'privacidade', 'cookies', 'afiliados', 'sobre', 'contato'];
+      // 6. Institutional pages triggers by query or hash (e.g. ?page=privacidade or #termos)
       const pageParam = (params.get('page') || '').toLowerCase();
       if (validTabs.includes(pageParam as InstitutionalTab)) {
         setInstitutionalTab(pageParam as InstitutionalTab);
@@ -89,6 +158,13 @@ export default function App() {
         setInstitutionalTab(hash as InstitutionalTab);
         setCurrentView('institutional');
         return;
+      }
+
+      // 7. If user navigated back via browser and URL is home, return to home view
+      if (!rawPath && !productId && !hasAdminParam && !pageParam && currentView === 'review') {
+        setSelectedProduct(null);
+        setCurrentView('home');
+        updatePageSEO();
       }
     };
 
@@ -114,7 +190,7 @@ export default function App() {
       window.removeEventListener('hashchange', checkUrlTriggers);
       window.removeEventListener('keydown', handleKeyDown);
     };
-  }, [isAdminAuthenticated]);
+  }, [isAdminAuthenticated, products, currentView]);
 
 
   // Fetch initial data from server API with static fallback for Vercel / Netlify
@@ -347,6 +423,29 @@ export default function App() {
   const handleSelectProduct = (prod: Product) => {
     setSelectedProduct(prod);
     setCurrentView('review');
+    try {
+      const targetPath = prod.slug ? `/${prod.slug}/` : `/?product=${encodeURIComponent(prod.id)}`;
+      const currentPath = window.location.pathname;
+      if (currentPath !== targetPath && currentPath !== `/${prod.slug}`) {
+        window.history.pushState({ productId: prod.id, slug: prod.slug }, '', targetPath);
+      }
+    } catch (e) {
+      console.warn('History pushState error:', e);
+    }
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  const handleGoHome = () => {
+    setCurrentView('home');
+    setSelectedProduct(null);
+    try {
+      if (window.location.pathname !== '/' || window.location.search.length > 0) {
+        window.history.pushState({}, '', '/');
+      }
+    } catch (e) {
+      console.warn('History pushState error:', e);
+    }
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   // Related products for the review view
@@ -449,10 +548,7 @@ export default function App() {
           setSearchTerm(val);
           if (currentView !== 'home') setCurrentView('home');
         }}
-        onGoHome={() => {
-          setCurrentView('home');
-          setSelectedProduct(null);
-        }}
+        onGoHome={handleGoHome}
       />
 
       {/* Loading state indicator */}
@@ -499,7 +595,7 @@ export default function App() {
           {currentView === 'review' && selectedProduct && (
             <ReviewDetail
               product={selectedProduct}
-              onBack={() => setCurrentView('home')}
+              onBack={handleGoHome}
               onSelectRelated={handleSelectProduct}
               relatedProducts={relatedProducts}
             />

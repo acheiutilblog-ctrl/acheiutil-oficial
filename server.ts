@@ -777,7 +777,7 @@ const handleRssFeed = (_req: any, res: any) => {
     const itemsXml = products
       .slice(0, 50)
       .map((p) => {
-        const itemUrl = `${baseUrl}/?product=${p.id}`;
+        const itemUrl = p.slug ? `${baseUrl}/${p.slug}/` : `${baseUrl}/?product=${p.id}`;
         const rawImg = p.images?.[0] || "/logo-detective.png";
         const imageUrl = rawImg.startsWith("http")
           ? rawImg
@@ -833,6 +833,72 @@ app.get("/rss.xml", handleRssFeed);
 app.get("/feed.xml", handleRssFeed);
 app.get("/feed", handleRssFeed);
 app.get("/api/feed", handleRssFeed);
+
+// ==================== SITEMAP.XML & ROBOTS.TXT ====================
+app.get(["/sitemap.xml", "/sitemap_index.xml"], (_req, res) => {
+  try {
+    const products = readProducts();
+    const settings = readSettings();
+    const baseUrl = `https://${settings.siteName || "acheiutil.com"}`;
+    const today = new Date().toISOString().split("T")[0];
+
+    const staticUrls = [
+      { loc: `${baseUrl}/`, priority: "1.0", changefreq: "daily" },
+      { loc: `${baseUrl}/termos`, priority: "0.3", changefreq: "yearly" },
+      { loc: `${baseUrl}/privacidade`, priority: "0.3", changefreq: "yearly" },
+      { loc: `${baseUrl}/cookies`, priority: "0.3", changefreq: "yearly" },
+      { loc: `${baseUrl}/afiliados`, priority: "0.5", changefreq: "monthly" },
+      { loc: `${baseUrl}/sobre`, priority: "0.5", changefreq: "monthly" },
+      { loc: `${baseUrl}/contato`, priority: "0.5", changefreq: "monthly" },
+    ];
+
+    const productUrls = products.map((p) => {
+      const loc = p.slug ? `${baseUrl}/${p.slug}/` : `${baseUrl}/?product=${p.id}`;
+      const lastmod = p.updatedAt ? p.updatedAt.split("T")[0] : today;
+      return `  <url>
+    <loc>${loc}</loc>
+    <lastmod>${lastmod}</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>`;
+    });
+
+    const sitemapXml = `<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+${staticUrls
+  .map(
+    (u) => `  <url>
+    <loc>${u.loc}</loc>
+    <lastmod>${today}</lastmod>
+    <changefreq>${u.changefreq}</changefreq>
+    <priority>${u.priority}</priority>
+  </url>`
+  )
+  .join("\n")}
+${productUrls.join("\n")}
+</urlset>`;
+
+    res.setHeader("Content-Type", "application/xml; charset=utf-8");
+    res.setHeader("Cache-Control", "public, max-age=3600");
+    res.send(sitemapXml);
+  } catch (err: any) {
+    res.status(500).send("Erro gerando sitemap: " + err.message);
+  }
+});
+
+app.get("/robots.txt", (_req, res) => {
+  const settings = readSettings();
+  const baseUrl = `https://${settings.siteName || "acheiutil.com"}`;
+  const robots = `User-agent: *
+Allow: /
+Disallow: /api/
+Disallow: /admin
+
+Sitemap: ${baseUrl}/sitemap.xml
+`;
+  res.setHeader("Content-Type", "text/plain; charset=utf-8");
+  res.send(robots);
+});
 
 // Sync / Import posts directly from WordPress (acheiutil.com)
 app.post("/api/wordpress/sync", (_req, res) => {
@@ -1194,6 +1260,129 @@ function generateHeuristicReview(title: string, category: string, price: any, _d
   };
 }
 
+function findProductFromRequest(req: any): any | null {
+  try {
+    const products = readProducts();
+    const queryId = (req.query.product || req.query.p || req.query.prod) as string;
+    if (queryId) {
+      const found = products.find(
+        (p) =>
+          p.id === queryId ||
+          p.slug === queryId ||
+          p.id.toLowerCase() === queryId.toLowerCase() ||
+          (p.slug && p.slug.toLowerCase() === queryId.toLowerCase())
+      );
+      if (found) return found;
+    }
+
+    let pathSlug = "";
+    try {
+      pathSlug = decodeURIComponent(req.path).replace(/^\/+|\/+$/g, "").trim().toLowerCase();
+    } catch {
+      pathSlug = req.path.replace(/^\/+|\/+$/g, "").trim().toLowerCase();
+    }
+
+    if (
+      !pathSlug ||
+      pathSlug.startsWith("api") ||
+      pathSlug.startsWith("@") ||
+      pathSlug.startsWith("src") ||
+      pathSlug.startsWith("node_modules") ||
+      pathSlug.includes(".") ||
+      pathSlug === "feed" ||
+      pathSlug === "rss" ||
+      pathSlug === "sitemap" ||
+      pathSlug === "admin"
+    ) {
+      return null;
+    }
+
+    const cleanSlug = pathSlug.replace(/^(produto|review|analise)\//, "");
+
+    return (
+      products.find((p) => {
+        const pSlug = (p.slug || "").toLowerCase();
+        const pId = (p.id || "").toLowerCase();
+        return (
+          pSlug === cleanSlug ||
+          pId === cleanSlug ||
+          pSlug === pathSlug ||
+          pId === pathSlug ||
+          (pSlug && pSlug.replace(/^https-acheiutil-com-/, "") === cleanSlug) ||
+          (pSlug && cleanSlug.includes(pSlug)) ||
+          (pSlug && pSlug.includes(cleanSlug) && cleanSlug.length > 8)
+        );
+      }) || null
+    );
+  } catch (e) {
+    console.error("findProductFromRequest error:", e);
+    return null;
+  }
+}
+
+function renderHtmlWithProductMeta(template: string, prod: any): string {
+  if (!prod) return template;
+  try {
+    const title = `${prod.title} - Vale a Pena? Review Sincera | acheiutil.com`;
+    const desc = (prod.subtitle || prod.summary || prod.verdict?.summary || `Confira a análise sincera de ${prod.title}, prós, contras e o menor preço verificado no Mercado Livre.`)
+      .replace(/"/g, "&quot;");
+    const img = prod.images?.[0] || "https://acheiutil.com/logo-detective.png";
+    const canonicalUrl = prod.slug ? `https://acheiutil.com/${prod.slug}/` : `https://acheiutil.com/?product=${prod.id}`;
+
+    // Schema.org JSON-LD
+    const jsonLd = JSON.stringify({
+      "@context": "https://schema.org/",
+      "@type": "Product",
+      "name": prod.title,
+      "image": prod.images,
+      "description": prod.summary || prod.subtitle,
+      "offers": {
+        "@type": "Offer",
+        "url": prod.affiliateUrl || canonicalUrl,
+        "priceCurrency": "BRL",
+        "price": prod.price || 0,
+        "availability": "https://schema.org/InStock",
+        "seller": {
+          "@type": "Organization",
+          "name": prod.officialStore || "Mercado Livre"
+        }
+      },
+      "aggregateRating": {
+        "@type": "AggregateRating",
+        "ratingValue": prod.rating || 4.8,
+        "reviewCount": prod.reviewCount || 120,
+        "bestRating": "5",
+        "worstRating": "1"
+      }
+    });
+
+    let rendered = template
+      .replace(/<title>.*?<\/title>/gi, `<title>${title}</title>`)
+      .replace(/<meta property="og:title" content=".*?"/gi, `<meta property="og:title" content="${title.replace(/"/g, '&quot;')}"`)
+      .replace(/<meta property="og:description" content=".*?"/gi, `<meta property="og:description" content="${desc}"`)
+      .replace(/<meta property="og:image" content=".*?"/gi, `<meta property="og:image" content="${img}"`)
+      .replace(/<meta property="og:url" content=".*?"/gi, `<meta property="og:url" content="${canonicalUrl}"`)
+      .replace(/<meta name="twitter:title" content=".*?"/gi, `<meta name="twitter:title" content="${title.replace(/"/g, '&quot;')}"`)
+      .replace(/<meta name="twitter:description" content=".*?"/gi, `<meta name="twitter:description" content="${desc}"`)
+      .replace(/<meta name="twitter:image" content=".*?"/gi, `<meta name="twitter:image" content="${img}"`);
+
+    // Inserir tag canônica e schema se não existir
+    if (!rendered.includes('rel="canonical"')) {
+      rendered = rendered.replace('</head>', `  <link rel="canonical" href="${canonicalUrl}" />\n</head>`);
+    } else {
+      rendered = rendered.replace(/<link rel="canonical" href=".*?"\s*\/?>/gi, `<link rel="canonical" href="${canonicalUrl}" />`);
+    }
+
+    const jsonLdTag = `\n  <script type="application/ld+json" id="server-jsonld">${jsonLd}</script>\n</head>`;
+    rendered = rendered.replace('</head>', jsonLdTag);
+
+    return rendered;
+  } catch (err) {
+    console.error("renderHtmlWithProductMeta error:", err);
+    return template;
+  }
+}
+
 // ==================== VITE MIDDLEWARE / STATIC ====================
 
 async function startServer() {
@@ -1202,11 +1391,48 @@ async function startServer() {
       server: { middlewareMode: true },
       appType: "spa",
     });
+
+    // Intercept HTML requests for product slugs and queries so social bots, Googlebot and browsers get real metadata
+    app.use(async (req, res, next) => {
+      if (req.method === "GET" && !req.path.startsWith("/api") && (req.headers.accept?.includes("text/html") || !req.path.includes("."))) {
+        const prod = findProductFromRequest(req);
+        if (prod) {
+          try {
+            const indexPath = path.join(process.cwd(), "index.html");
+            let template = fs.readFileSync(indexPath, "utf-8");
+            template = await vite.transformIndexHtml(req.originalUrl, template);
+            template = renderHtmlWithProductMeta(template, prod);
+            res.status(200).set({ "Content-Type": "text/html; charset=utf-8" }).end(template);
+            return;
+          } catch (e) {
+            next(e);
+            return;
+          }
+        }
+      }
+      next();
+    });
+
     app.use(vite.middlewares);
   } else {
     const distPath = path.join(process.cwd(), "dist");
     app.use(express.static(distPath));
-    app.get("*", (_req, res) => {
+    app.get("*", (req, res) => {
+      try {
+        const indexPath = path.join(distPath, "index.html");
+        if (fs.existsSync(indexPath)) {
+          let html = fs.readFileSync(indexPath, "utf-8");
+          const prod = findProductFromRequest(req);
+          if (prod) {
+            html = renderHtmlWithProductMeta(html, prod);
+          }
+          res.setHeader("Content-Type", "text/html; charset=utf-8");
+          res.send(html);
+          return;
+        }
+      } catch (err) {
+        console.error("Error serving index.html:", err);
+      }
       res.sendFile(path.join(distPath, "index.html"));
     });
   }

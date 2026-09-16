@@ -46,7 +46,9 @@ export const SocialAutomationSection: React.FC<SocialAutomationSectionProps> = (
   const getGroupPostText = () => {
     if (!selectedProduct) return '';
 
-    const productUrl = `${siteUrl}/?product=${selectedProduct.id}`;
+    const productUrl = selectedProduct.slug
+      ? `${siteUrl}/${selectedProduct.slug}/`
+      : `${siteUrl}/?product=${selectedProduct.id}`;
     const priceStr = `R$ ${Number(selectedProduct.price || 0).toFixed(2).replace('.', ',')}`;
 
     if (postTone === 'pet' || selectedProduct.category === 'pet') {

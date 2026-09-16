@@ -12,12 +12,27 @@ export function updatePageSEO(product?: Product, categoryTitle?: string) {
       metaDesc.setAttribute("content", product.summary.slice(0, 160));
     }
 
-    // OpenGraph
+    // OpenGraph & Canonical
+    const canonicalUrl = product.slug
+      ? `https://acheiutil.com/${product.slug}/`
+      : `https://acheiutil.com/?product=${product.id}`;
+
     const ogTitle = document.querySelector('meta[property="og:title"]');
     if (ogTitle) ogTitle.setAttribute("content", `${product.title} - Review e Menor Preço`);
 
     const ogDesc = document.querySelector('meta[property="og:description"]');
     if (ogDesc) ogDesc.setAttribute("content", product.summary.slice(0, 160));
+
+    const ogUrl = document.querySelector('meta[property="og:url"]');
+    if (ogUrl) ogUrl.setAttribute("content", canonicalUrl);
+
+    let canonicalLink = document.querySelector('link[rel="canonical"]');
+    if (!canonicalLink) {
+      canonicalLink = document.createElement("link");
+      canonicalLink.setAttribute("rel", "canonical");
+      document.head.appendChild(canonicalLink);
+    }
+    canonicalLink.setAttribute("href", canonicalUrl);
 
     // Update JSON-LD structured data
     let scriptTag = document.getElementById("jsonld-structured-data") as HTMLScriptElement | null;
