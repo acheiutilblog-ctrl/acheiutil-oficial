@@ -765,6 +765,75 @@ app.get("/api/export/products.csv", (_req, res) => {
   }
 });
 
+// Standard RSS 2.0 / Atom feed for social auto-posting (Metricool, Zapier, Buffer, IFTTT, Publer, etc.)
+const handleRssFeed = (_req: any, res: any) => {
+  try {
+    const products = readProducts();
+    const settings = readSettings();
+    const siteDomain = settings.siteName || "acheiutil.com";
+    const baseUrl = `https://${siteDomain}`;
+    const pubDate = new Date().toUTCString();
+
+    const itemsXml = products
+      .slice(0, 50)
+      .map((p) => {
+        const itemUrl = `${baseUrl}/?product=${p.id}`;
+        const rawImg = p.images?.[0] || "/logo-detective.png";
+        const imageUrl = rawImg.startsWith("http")
+          ? rawImg
+          : `${baseUrl}${rawImg.startsWith("/") ? "" : "/"}${rawImg}`;
+        const itemDate = p.createdAt ? new Date(p.createdAt).toUTCString() : pubDate;
+        const cleanSummary = (p.summary || p.subtitle || p.title || "")
+          .replace(/[<>&"]/g, (c) => ({ "<": "&lt;", ">": "&gt;", "&": "&amp;", '"': "&quot;" }[c] || c));
+
+        return `
+    <item>
+      <title><![CDATA[${p.title}]]></title>
+      <link>${itemUrl}</link>
+      <guid isPermaLink="true">${itemUrl}</guid>
+      <pubDate>${itemDate}</pubDate>
+      <category><![CDATA[${p.category || "Geral"}]]></category>
+      <description><![CDATA[${cleanSummary} - Por R$ ${Number(p.price || 0).toFixed(2)} no Mercado Livre. Confira a análise do Sr. Detetive no AcheiUtil.]]></description>
+      <enclosure url="${imageUrl}" type="image/jpeg" length="0" />
+      <media:content url="${imageUrl}" medium="image" />
+    </item>`;
+      })
+      .join("\n");
+
+    const rssXml = `<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0" 
+  xmlns:atom="http://www.w3.org/2005/Atom"
+  xmlns:media="http://search.yahoo.com/mrss/"
+  xmlns:content="http://purl.org/rss/1.0/modules/content/">
+  <channel>
+    <title><![CDATA[acheiutil.com - Achados Úteis e Reviews Reais]]></title>
+    <link>${baseUrl}</link>
+    <description><![CDATA[${settings.tagline || "Achados Úteis com Reviews Reais e os Menores Preços do Mercado Livre"}]]></description>
+    <language>pt-BR</language>
+    <lastBuildDate>${pubDate}</lastBuildDate>
+    <atom:link href="${baseUrl}/rss.xml" rel="self" type="application/rss+xml" />
+    <image>
+      <url>${baseUrl}/logo-detective.png</url>
+      <title><![CDATA[acheiutil.com]]></title>
+      <link>${baseUrl}</link>
+    </image>
+${itemsXml}
+  </channel>
+</rss>`;
+
+    res.setHeader("Content-Type", "application/rss+xml; charset=utf-8");
+    res.setHeader("Cache-Control", "public, max-age=1800"); // 30 mins
+    res.send(rssXml);
+  } catch (error: any) {
+    res.status(500).send("Erro gerando RSS feed: " + error.message);
+  }
+};
+
+app.get("/rss.xml", handleRssFeed);
+app.get("/feed.xml", handleRssFeed);
+app.get("/feed", handleRssFeed);
+app.get("/api/feed", handleRssFeed);
+
 // Sync / Import posts directly from WordPress (acheiutil.com)
 app.post("/api/wordpress/sync", (_req, res) => {
   try {

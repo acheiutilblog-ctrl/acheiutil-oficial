@@ -30,9 +30,12 @@ import {
   Copy,
   ChevronLeft,
   ChevronRight,
+  Share2,
+  Rss,
 } from 'lucide-react';
 import { Product, ProductCategory, SiteSettings } from '../types';
 import { WordPressButtonGenerator } from './WordPressButtonGenerator';
+import { SocialAutomationSection } from './SocialAutomationSection';
 
 interface AdminPanelProps {
   products: Product[];
@@ -42,7 +45,7 @@ interface AdminPanelProps {
   settings: SiteSettings;
   onSaveSettings: (settings: SiteSettings) => Promise<void>;
   onLogout?: () => void;
-  initialTab?: 'manage' | 'ml-api' | 'form' | 'settings' | 'export' | 'wpbutton';
+  initialTab?: 'manage' | 'ml-api' | 'form' | 'settings' | 'export' | 'wpbutton' | 'social';
 }
 
 export const AdminPanel: React.FC<AdminPanelProps> = ({
@@ -55,7 +58,7 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({
   onLogout,
   initialTab = 'manage',
 }) => {
-  const [activeTab, setActiveTab] = useState<'manage' | 'ml-api' | 'form' | 'settings' | 'export' | 'wpbutton'>(initialTab);
+  const [activeTab, setActiveTab] = useState<'manage' | 'ml-api' | 'form' | 'settings' | 'export' | 'wpbutton' | 'social'>(initialTab);
   const [adminSearch, setAdminSearch] = useState('');
   const [loading, setLoading] = useState(false);
   const [notification, setNotification] = useState<{ type: 'success' | 'error'; message: string } | null>(null);
@@ -709,6 +712,18 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({
           }`}
         >
           ⚙️ Afiliado & Configurações
+        </button>
+
+        <button
+          onClick={() => setActiveTab('social')}
+          className={`py-3 px-4 text-xs sm:text-sm font-bold border-b-2 transition-all whitespace-nowrap cursor-pointer flex items-center gap-1.5 ${
+            activeTab === 'social'
+              ? 'border-orange-500 text-orange-600'
+              : 'border-transparent text-slate-600 hover:text-slate-900'
+          }`}
+        >
+          <Share2 className="w-4 h-4 text-orange-500" />
+          <span>📡 Divulgar no Facebook, Insta & Grupos</span>
         </button>
 
         <button
@@ -2015,6 +2030,16 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({
           <WordPressButtonGenerator
             products={products}
             initialProductId={targetButtonProductId || products[0]?.id}
+          />
+        </div>
+      )}
+
+      {/* ================= TAB 7: SOCIAL MEDIA AUTOMATION & FACEBOOK GROUPS ================= */}
+      {activeTab === 'social' && (
+        <div className="mt-6">
+          <SocialAutomationSection
+            products={products}
+            siteUrl={typeof window !== 'undefined' ? window.location.origin : 'https://acheiutil.com'}
           />
         </div>
       )}

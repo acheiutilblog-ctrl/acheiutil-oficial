@@ -130,14 +130,47 @@ export const ReviewDetail: React.FC<ReviewDetailProps> = ({
           </nav>
 
           {/* Social share & Indicar */}
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-1.5 flex-wrap">
             <button
               onClick={handleShareWhatsApp}
               className="px-2.5 py-1.5 rounded-lg bg-emerald-50 hover:bg-emerald-100 text-emerald-700 transition-colors text-xs flex items-center gap-1.5 font-bold cursor-pointer border border-emerald-200/60"
               title="Indicar pelo WhatsApp"
             >
               <Share2 className="w-3.5 h-3.5 text-emerald-600" />
-              <span>Indicar no WhatsApp</span>
+              <span>WhatsApp</span>
+            </button>
+            <button
+              onClick={() => {
+                const url = encodeURIComponent(window.location.href);
+                window.open(`https://www.facebook.com/sharer/sharer.php?u=${url}`, '_blank');
+              }}
+              className="px-2.5 py-1.5 rounded-lg bg-blue-50 hover:bg-blue-100 text-blue-700 transition-colors text-xs flex items-center gap-1.5 font-bold cursor-pointer border border-blue-200/60"
+              title="Compartilhar no Facebook"
+            >
+              <span>Facebook</span>
+            </button>
+            <button
+              onClick={() => {
+                const url = encodeURIComponent(window.location.href);
+                const desc = encodeURIComponent(`${product.title} - Análise sincera no acheiutil.com`);
+                const media = encodeURIComponent(product.images?.[0] || '');
+                window.open(`https://pinterest.com/pin/create/button/?url=${url}&media=${media}&description=${desc}`, '_blank');
+              }}
+              className="px-2.5 py-1.5 rounded-lg bg-rose-50 hover:bg-rose-100 text-rose-700 transition-colors text-xs flex items-center gap-1.5 font-bold cursor-pointer border border-rose-200/60"
+              title="Salvar no Pinterest"
+            >
+              <span>Pinterest</span>
+            </button>
+            <button
+              onClick={() => {
+                const url = encodeURIComponent(window.location.href);
+                const text = encodeURIComponent(`Análise do Sr. Detetive: ${product.title} vale a pena? Confira:`);
+                window.open(`https://twitter.com/intent/tweet?url=${url}&text=${text}`, '_blank');
+              }}
+              className="px-2.5 py-1.5 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-800 transition-colors text-xs flex items-center gap-1.5 font-bold cursor-pointer border border-slate-200"
+              title="Compartilhar no X (Twitter)"
+            >
+              <span>X</span>
             </button>
             <button
               onClick={handleCopyLink}
