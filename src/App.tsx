@@ -189,6 +189,34 @@ export default function App() {
     init();
   }, []);
 
+  // Ensure browser tab favicon strictly uses the new detective logo
+  useEffect(() => {
+    const applyFavicon = () => {
+      const timestamp = Date.now();
+      const iconUrl = `/logo-detective.png?v=${timestamp}`;
+      
+      const setLink = (selector: string, rel: string, type?: string) => {
+        let link = document.querySelector(selector) as HTMLLinkElement | null;
+        if (!link) {
+          link = document.createElement('link');
+          link.rel = rel;
+          if (type) link.type = type;
+          document.head.appendChild(link);
+        }
+        link.href = iconUrl;
+      };
+
+      setLink("link[rel='icon'][sizes='32x32']", "icon", "image/png");
+      setLink("link[rel='icon']:not([sizes])", "icon", "image/png");
+      setLink("link[rel='shortcut icon']", "shortcut icon");
+      setLink("link[rel='apple-touch-icon']", "apple-touch-icon");
+    };
+
+    applyFavicon();
+    window.addEventListener('logoUpdated', applyFavicon);
+    return () => window.removeEventListener('logoUpdated', applyFavicon);
+  }, []);
+
   // Dynamically load Google Analytics if configured
   useEffect(() => {
     const gaId = settings.googleAnalyticsId?.trim();

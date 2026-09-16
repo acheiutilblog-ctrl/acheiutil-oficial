@@ -144,7 +144,8 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({
         const data = await res.json();
         if (data.success) {
           setLogoTimestamp(Date.now());
-          showNotice('success', '✅ Logo oficial do Detetive atualizado com sucesso em todo o site!');
+          window.dispatchEvent(new CustomEvent('logoUpdated'));
+          showNotice('success', '✅ Logo oficial do Detetive atualizado com sucesso em todo o site e na aba do navegador!');
         } else {
           showNotice('error', data.message || 'Erro ao atualizar logo.');
         }

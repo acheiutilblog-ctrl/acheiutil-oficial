@@ -397,6 +397,19 @@ app.post("/api/upload", (req, res) => {
   }
 });
 
+// Favicon explicit endpoint
+app.get("/favicon.ico", (_req, res) => {
+  const icoPath = path.join(process.cwd(), "public", "favicon.ico");
+  if (fs.existsSync(icoPath)) {
+    res.setHeader("Content-Type", "image/x-icon");
+    res.setHeader("Cache-Control", "no-cache, must-revalidate");
+    return res.sendFile(icoPath);
+  }
+  const pngPath = path.join(process.cwd(), "public", "logo-detective.png");
+  res.setHeader("Content-Type", "image/png");
+  res.sendFile(pngPath);
+});
+
 // Logo upload endpoint (updates public/logo-detective.png directly)
 app.post("/api/upload-logo", (req, res) => {
   try {
@@ -416,6 +429,28 @@ app.post("/api/upload-logo", (req, res) => {
     fs.writeFileSync(path.join(pubDir, "logo-sr-detetive.png"), buf);
     fs.writeFileSync(path.join(pubDir, "logo-detetive.png"), buf);
     fs.writeFileSync(path.join(pubDir, "logo_transparent.png"), buf);
+    fs.writeFileSync(path.join(pubDir, "favicon.png"), buf);
+    fs.writeFileSync(path.join(pubDir, "apple-touch-icon.png"), buf);
+
+    // Create ICO with PNG embedded
+    const icoHeader = Buffer.alloc(22);
+    icoHeader.writeUInt16LE(0, 0);
+    icoHeader.writeUInt16LE(1, 2);
+    icoHeader.writeUInt16LE(1, 4);
+    icoHeader.writeUInt8(0, 6);
+    icoHeader.writeUInt8(0, 7);
+    icoHeader.writeUInt8(0, 8);
+    icoHeader.writeUInt8(0, 9);
+    icoHeader.writeUInt16LE(1, 10);
+    icoHeader.writeUInt16LE(32, 12);
+    icoHeader.writeUInt32LE(buf.length, 14);
+    icoHeader.writeUInt32LE(22, 18);
+    const icoBuf = Buffer.concat([icoHeader, buf]);
+    fs.writeFileSync(path.join(pubDir, "favicon.ico"), icoBuf);
+
+    // SVG wrapper
+    const svgContent = `<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 1024 1024" width="1024" height="1024">\n  <image width="1024" height="1024" xlink:href="data:image/png;base64,${base64Data}" />\n</svg>`;
+    fs.writeFileSync(path.join(pubDir, "logo-icon.svg"), svgContent);
 
     const distDir = path.join(process.cwd(), "dist");
     if (fs.existsSync(distDir)) {
@@ -424,11 +459,15 @@ app.post("/api/upload-logo", (req, res) => {
       fs.writeFileSync(path.join(distDir, "logo-sr-detetive.png"), buf);
       fs.writeFileSync(path.join(distDir, "logo-detetive.png"), buf);
       fs.writeFileSync(path.join(distDir, "logo_transparent.png"), buf);
+      fs.writeFileSync(path.join(distDir, "favicon.png"), buf);
+      fs.writeFileSync(path.join(distDir, "apple-touch-icon.png"), buf);
+      fs.writeFileSync(path.join(distDir, "favicon.ico"), icoBuf);
+      fs.writeFileSync(path.join(distDir, "logo-icon.svg"), svgContent);
     }
 
     res.json({
       success: true,
-      message: "Logo original salvo com sucesso!",
+      message: "Logo original e ícone das abas atualizados com sucesso!",
       url: `/logo-detective.png?v=${Date.now()}`
     });
   } catch (error: any) {
