@@ -14,7 +14,7 @@ import { CookieConsent } from './components/CookieConsent';
 import { ShareRecommendationBox } from './components/ShareRecommendationBox';
 import { Product, ProductCategory, SiteSettings, InstitutionalTab } from './types';
 import { updatePageSEO } from './lib/seo';
-import { Zap, Flame, Sparkles, RefreshCw, Settings, LogOut, ArrowUp } from 'lucide-react';
+import { Zap, Flame, Sparkles, RefreshCw, Settings, LogOut, ArrowUp, ChevronLeft, ChevronRight } from 'lucide-react';
 
 export default function App() {
   const [products, setProducts] = useState<Product[]>([]);
@@ -47,6 +47,7 @@ export default function App() {
   const [currentCategory, setCurrentCategory] = useState<ProductCategory | 'todas' | 'guias'>('todas');
   const [searchTerm, setSearchTerm] = useState('');
   const [sortOption, setSortOption] = useState('recent');
+  const [currentPage, setCurrentPage] = useState(1);
   const [showScrollTop, setShowScrollTop] = useState(false);
 
   // Monitor scroll for Back-to-Top button
@@ -163,11 +164,15 @@ export default function App() {
 
     // Static fallback
     try {
+      const savedBackup = localStorage.getItem('acheiutil_settings_backup');
+      if (savedBackup) {
+        setSettings(JSON.parse(savedBackup));
+      }
       const fallbackRes = await fetch('/data/settings.json');
       if (fallbackRes.ok) {
         const fallbackSettings = await fallbackRes.json();
         if (fallbackSettings) {
-          setSettings(fallbackSettings);
+          setSettings((prev) => ({ ...fallbackSettings, ...prev }));
         }
       }
     } catch (fallbackErr) {
@@ -255,6 +260,19 @@ export default function App() {
       });
   }, [products, currentCategory, searchTerm, sortOption]);
 
+  // Reset pagination to page 1 whenever category, search or sorting changes
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [currentCategory, searchTerm, sortOption]);
+
+  // Pagination calculation (12 products per page)
+  const PRODUCTS_PER_PAGE = 12;
+  const totalPages = Math.ceil(filteredProducts.length / PRODUCTS_PER_PAGE) || 1;
+  const paginatedProducts = useMemo(() => {
+    const startIndex = (currentPage - 1) * PRODUCTS_PER_PAGE;
+    return filteredProducts.slice(startIndex, startIndex + PRODUCTS_PER_PAGE);
+  }, [filteredProducts, currentPage]);
+
   // Featured Product for Hero Spotlight
   const featuredProduct = useMemo(() => {
     return products.find((p) => p.featured && p.price > 0) || products.find((p) => p.price > 0) || products[0];
@@ -267,14 +285,33 @@ export default function App() {
 
   // Save Settings handler
   const handleSaveSettings = async (newSettings: SiteSettings) => {
-    const res = await fetch('/api/settings', {
-      method: 'PUT',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(newSettings),
-    });
-    const data = await res.json();
-    if (data.success) {
-      setSettings(data.data);
+    // Update local state and backup immediately
+    setSettings(newSettings);
+    try {
+      localStorage.setItem('acheiutil_settings_backup', JSON.stringify(newSettings));
+    } catch {
+      // ignore
+    }
+
+    try {
+      const res = await fetch('/api/settings', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(newSettings),
+      });
+      if (res.ok) {
+        const data = await res.json();
+        if (data.success && (data.settings || data.data)) {
+          setSettings(data.settings || data.data);
+          try {
+            localStorage.setItem('acheiutil_settings_backup', JSON.stringify(data.settings || data.data));
+          } catch {
+            // ignore
+          }
+        }
+      }
+    } catch (err: any) {
+      console.warn('Backend /api/settings post error, kept local fallback:', err);
     }
   };
 
@@ -511,17 +548,92 @@ export default function App() {
               />
 
               {/* Products Grid */}
-              {filteredProducts.length > 0 ? (
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 mb-14">
-                  {filteredProducts.map((product) => (
-                    <ProductCard
-                      key={product.id}
-                      product={product}
-                      onSelect={handleSelectProduct}
-                    />
-                  ))}
-                </div>
-              ) : (
+              <div id="catalog-grid" className="scroll-mt-24">
+                {filteredProducts.length > 0 ? (
+                  <>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 mb-8">
+                      {paginatedProducts.map((product) => (
+                        <ProductCard
+                          key={product.id}
+                          product={product}
+                          onSelect={handleSelectProduct}
+                        />
+                      ))}
+                    </div>
+
+                    {/* Pagination Controls */}
+                    {totalPages > 1 && (
+                      <div className="mb-14 p-4 rounded-2xl bg-white border border-slate-200/90 shadow-xs flex flex-col sm:flex-row items-center justify-between gap-4">
+                        <div className="text-xs text-slate-500 text-center sm:text-left">
+                          Exibindo achados <strong className="text-slate-800">{(currentPage - 1) * PRODUCTS_PER_PAGE + 1}</strong> até{' '}
+                          <strong className="text-slate-800">
+                            {Math.min(currentPage * PRODUCTS_PER_PAGE, filteredProducts.length)}
+                          </strong>{' '}
+                          de um total de <strong className="text-slate-800">{filteredProducts.length}</strong> produtos
+                        </div>
+
+                        <div className="flex items-center gap-1.5 flex-wrap justify-center">
+                          <button
+                            onClick={() => {
+                              setCurrentPage((prev) => Math.max(prev - 1, 1));
+                              document.getElementById('catalog-grid')?.scrollIntoView({ behavior: 'smooth' });
+                            }}
+                            disabled={currentPage === 1}
+                            className="flex items-center gap-1 px-3 py-2 rounded-xl text-xs font-bold bg-slate-100 hover:bg-slate-200 text-slate-700 disabled:opacity-40 disabled:cursor-not-allowed transition-colors cursor-pointer"
+                            aria-label="Página anterior"
+                          >
+                            <ChevronLeft className="w-4 h-4" />
+                            <span>Anterior</span>
+                          </button>
+
+                          {Array.from({ length: totalPages }, (_, i) => i + 1).map((pageNum) => {
+                            const isEdge = pageNum === 1 || pageNum === totalPages;
+                            const isNear = Math.abs(pageNum - currentPage) <= 1;
+                            if (!isEdge && !isNear) {
+                              if (pageNum === 2 || pageNum === totalPages - 1) {
+                                return (
+                                  <span key={pageNum} className="px-1 text-slate-400 text-xs">
+                                    ...
+                                  </span>
+                                );
+                              }
+                              return null;
+                            }
+                            return (
+                              <button
+                                key={pageNum}
+                                onClick={() => {
+                                  setCurrentPage(pageNum);
+                                  document.getElementById('catalog-grid')?.scrollIntoView({ behavior: 'smooth' });
+                                }}
+                                className={`min-w-9 h-9 px-2 rounded-xl text-xs font-bold transition-all cursor-pointer ${
+                                  currentPage === pageNum
+                                    ? 'bg-orange-500 text-white shadow-md shadow-orange-500/25 scale-105'
+                                    : 'bg-slate-50 hover:bg-slate-200 text-slate-700 border border-slate-200/50'
+                                }`}
+                              >
+                                {pageNum}
+                              </button>
+                            );
+                          })}
+
+                          <button
+                            onClick={() => {
+                              setCurrentPage((prev) => Math.min(prev + 1, totalPages));
+                              document.getElementById('catalog-grid')?.scrollIntoView({ behavior: 'smooth' });
+                            }}
+                            disabled={currentPage === totalPages}
+                            className="flex items-center gap-1 px-3 py-2 rounded-xl text-xs font-bold bg-slate-100 hover:bg-slate-200 text-slate-700 disabled:opacity-40 disabled:cursor-not-allowed transition-colors cursor-pointer"
+                            aria-label="Próxima página"
+                          >
+                            <span>Próxima</span>
+                            <ChevronRight className="w-4 h-4" />
+                          </button>
+                        </div>
+                      </div>
+                    )}
+                  </>
+                ) : (
                 <div className="bg-white rounded-3xl p-12 text-center border border-slate-200 mb-14 shadow-xs">
                   <Sparkles className="w-12 h-12 text-orange-400 mx-auto mb-3" />
                   <h3 className="text-lg font-bold text-slate-900 mb-1">
@@ -541,6 +653,7 @@ export default function App() {
                   </button>
                 </div>
               )}
+              </div>
 
               {/* Indique o Site Banner */}
               <ShareRecommendationBox

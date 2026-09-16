@@ -447,15 +447,22 @@ app.get("/api/settings", (_req, res) => {
   }
 });
 
-app.post("/api/settings", (req, res) => {
+const saveSettingsHandler = (req: express.Request, res: express.Response) => {
   try {
-    const updated = req.body;
+    const current = readSettings();
+    const updated = {
+      ...current,
+      ...req.body,
+    };
     writeSettings(updated);
-    res.json({ success: true, settings: updated, message: "Configurações salvas!" });
+    res.json({ success: true, settings: updated, data: updated, message: "Configurações salvas!" });
   } catch (error: any) {
     res.status(500).json({ success: false, error: error.message });
   }
-});
+};
+
+app.post("/api/settings", saveSettingsHandler);
+app.put("/api/settings", saveSettingsHandler);
 
 // ==================== WORDPRESS EXPORT ENDPOINTS ====================
 

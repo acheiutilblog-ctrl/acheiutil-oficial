@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import {
   Plus,
   Trash2,
@@ -28,6 +28,8 @@ import {
   Server,
   HelpCircle,
   Copy,
+  ChevronLeft,
+  ChevronRight,
 } from 'lucide-react';
 import { Product, ProductCategory, SiteSettings } from '../types';
 import { WordPressButtonGenerator } from './WordPressButtonGenerator';
@@ -117,9 +119,14 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({
 
   // Settings form
   const [localSettings, setLocalSettings] = useState<SiteSettings>(settings);
+  const [savedSettingsSuccess, setSavedSettingsSuccess] = useState(false);
   const [syncingWp, setSyncingWp] = useState(false);
   const [uploadingLogo, setUploadingLogo] = useState(false);
   const [logoTimestamp, setLogoTimestamp] = useState(Date.now());
+
+  useEffect(() => {
+    setLocalSettings(settings);
+  }, [settings]);
 
   const handleLogoFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -528,7 +535,9 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({
     try {
       setLoading(true);
       await onSaveSettings(localSettings);
-      showNotice('success', 'Configurações atualizadas com sucesso!');
+      setSavedSettingsSuccess(true);
+      setTimeout(() => setSavedSettingsSuccess(false), 5000);
+      showNotice('success', 'Configurações atualizadas e salvas com sucesso!');
     } catch (err: any) {
       showNotice('error', 'Falha ao salvar configurações: ' + err.message);
     } finally {
@@ -536,15 +545,31 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({
     }
   };
 
-  const filteredProducts = products.filter((p) => {
-    const q = adminSearch.toLowerCase().trim();
-    if (!q) return true;
-    return (
-      p.title.toLowerCase().includes(q) ||
-      p.category.toLowerCase().includes(q) ||
-      p.subcategory.toLowerCase().includes(q)
-    );
-  });
+  const [adminPage, setAdminPage] = useState(1);
+  const [adminPerPage, setAdminPerPage] = useState(10);
+
+  const filteredProducts = useMemo(() => {
+    return products.filter((p) => {
+      const q = adminSearch.toLowerCase().trim();
+      if (!q) return true;
+      return (
+        p.title.toLowerCase().includes(q) ||
+        p.category.toLowerCase().includes(q) ||
+        p.subcategory.toLowerCase().includes(q)
+      );
+    });
+  }, [products, adminSearch]);
+
+  useEffect(() => {
+    setAdminPage(1);
+  }, [adminSearch, adminPerPage]);
+
+  const adminTotalPages = adminPerPage > 0 ? (Math.ceil(filteredProducts.length / adminPerPage) || 1) : 1;
+  const paginatedAdminProducts = useMemo(() => {
+    if (adminPerPage === 0) return filteredProducts;
+    const start = (adminPage - 1) * adminPerPage;
+    return filteredProducts.slice(start, start + adminPerPage);
+  }, [filteredProducts, adminPage, adminPerPage]);
 
   return (
     <div id="admin-panel-container" className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
@@ -594,22 +619,48 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({
         </div>
       </div>
 
-      {/* Notification Toast */}
+      {/* Notification Toast (Inline + Floating) */}
       {notification && (
-        <div
-          className={`mt-4 p-4 rounded-xl flex items-center gap-3 text-sm font-medium transition-all ${
-            notification.type === 'success'
-              ? 'bg-emerald-50 text-emerald-900 border border-emerald-200'
-              : 'bg-rose-50 text-rose-900 border border-rose-200'
-          }`}
-        >
-          {notification.type === 'success' ? (
-            <CheckCircle2 className="w-5 h-5 text-emerald-600 shrink-0" />
-          ) : (
-            <AlertCircle className="w-5 h-5 text-rose-600 shrink-0" />
-          )}
-          <span>{notification.message}</span>
-        </div>
+        <>
+          <div
+            className={`mt-4 p-4 rounded-xl flex items-center gap-3 text-sm font-medium transition-all ${
+              notification.type === 'success'
+                ? 'bg-emerald-50 text-emerald-900 border border-emerald-200'
+                : 'bg-rose-50 text-rose-900 border border-rose-200'
+            }`}
+          >
+            {notification.type === 'success' ? (
+              <CheckCircle2 className="w-5 h-5 text-emerald-600 shrink-0" />
+            ) : (
+              <AlertCircle className="w-5 h-5 text-rose-600 shrink-0" />
+            )}
+            <span className="font-semibold">{notification.message}</span>
+          </div>
+
+          {/* Floating Toast for visibility when scrolled */}
+          <div
+            className={`fixed bottom-6 right-6 z-50 max-w-md p-4 rounded-2xl shadow-2xl flex items-center gap-3 text-sm font-bold border transition-all duration-300 ${
+              notification.type === 'success'
+                ? 'bg-emerald-700 text-white border-emerald-600 shadow-emerald-950/30'
+                : 'bg-rose-700 text-white border-rose-600 shadow-rose-950/30'
+            }`}
+          >
+            {notification.type === 'success' ? (
+              <CheckCircle2 className="w-5 h-5 text-white shrink-0" />
+            ) : (
+              <AlertCircle className="w-5 h-5 text-white shrink-0" />
+            )}
+            <span className="flex-1">{notification.message}</span>
+            <button
+              type="button"
+              onClick={() => setNotification(null)}
+              className="p-1 rounded-lg hover:bg-white/20 text-white transition-colors cursor-pointer"
+              title="Fechar"
+            >
+              <X className="w-4 h-4" />
+            </button>
+          </div>
+        </>
       )}
 
       {/* Tabs */}
@@ -717,8 +768,8 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({
             </button>
           </div>
           
-          {/* Search bar inside admin */}
-          <div className="flex items-center justify-between gap-4">
+          {/* Search bar & Pagination Controls inside admin */}
+          <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
             <div className="relative flex-1 max-w-md">
               <Search className="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" />
               <input
@@ -729,9 +780,24 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({
                 className="w-full pl-10 pr-4 py-2 bg-white rounded-xl border border-slate-200 text-xs sm:text-sm text-slate-900 focus:border-orange-500 focus:ring-1 focus:ring-orange-500 outline-hidden"
               />
             </div>
-            <span className="text-xs text-slate-500">
-              Mostrando {filteredProducts.length} de {products.length}
-            </span>
+            <div className="flex items-center justify-between sm:justify-end gap-3">
+              <div className="flex items-center gap-2">
+                <span className="text-xs text-slate-500 hidden sm:inline">Exibir:</span>
+                <select
+                  value={adminPerPage}
+                  onChange={(e) => setAdminPerPage(Number(e.target.value))}
+                  className="px-2.5 py-1.5 bg-white rounded-xl border border-slate-200 text-xs text-slate-700 font-semibold focus:border-orange-500 outline-hidden cursor-pointer"
+                >
+                  <option value={10}>10 por página</option>
+                  <option value={20}>20 por página</option>
+                  <option value={50}>50 por página</option>
+                  <option value={0}>Ver todos</option>
+                </select>
+              </div>
+              <span className="text-xs text-slate-500 font-medium whitespace-nowrap">
+                Total: {filteredProducts.length} produtos
+              </span>
+            </div>
           </div>
 
           {/* Table of products */}
@@ -748,7 +814,7 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-100">
-                  {filteredProducts.map((prod) => (
+                  {paginatedAdminProducts.map((prod) => (
                     <tr key={prod.id} className="hover:bg-slate-50/70 transition-colors">
                       <td className="py-3 px-4">
                         <div className="flex items-center gap-3 max-w-xs sm:max-w-md">
@@ -869,6 +935,53 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({
                 </tbody>
               </table>
             </div>
+
+            {/* Admin Table Pagination Bar */}
+            {adminPerPage > 0 && adminTotalPages > 1 && (
+              <div className="px-4 py-3 bg-slate-50 border-t border-slate-200 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs">
+                <div className="text-slate-600 font-medium">
+                  Exibindo produtos <strong className="text-slate-900">{(adminPage - 1) * adminPerPage + 1}</strong> até{' '}
+                  <strong className="text-slate-900">{Math.min(adminPage * adminPerPage, filteredProducts.length)}</strong>{' '}
+                  de <strong className="text-slate-900">{filteredProducts.length}</strong>
+                </div>
+                <div className="flex items-center gap-1.5 flex-wrap justify-center">
+                  <button
+                    type="button"
+                    onClick={() => setAdminPage((p) => Math.max(p - 1, 1))}
+                    disabled={adminPage === 1}
+                    className="p-1.5 px-2.5 rounded-lg border border-slate-200 bg-white text-slate-700 hover:bg-slate-100 disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer font-semibold flex items-center gap-1"
+                    title="Página Anterior"
+                  >
+                    <ChevronLeft className="w-4 h-4" />
+                    <span className="hidden sm:inline">Anterior</span>
+                  </button>
+                  {Array.from({ length: adminTotalPages }, (_, i) => i + 1).map((num) => (
+                    <button
+                      key={num}
+                      type="button"
+                      onClick={() => setAdminPage(num)}
+                      className={`min-w-8 h-8 px-2 rounded-lg font-bold transition-all cursor-pointer ${
+                        adminPage === num
+                          ? 'bg-orange-500 text-white shadow-xs'
+                          : 'bg-white border border-slate-200 text-slate-700 hover:bg-slate-100'
+                      }`}
+                    >
+                      {num}
+                    </button>
+                  ))}
+                  <button
+                    type="button"
+                    onClick={() => setAdminPage((p) => Math.min(p + 1, adminTotalPages))}
+                    disabled={adminPage === adminTotalPages}
+                    className="p-1.5 px-2.5 rounded-lg border border-slate-200 bg-white text-slate-700 hover:bg-slate-100 disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer font-semibold flex items-center gap-1"
+                    title="Próxima Página"
+                  >
+                    <span className="hidden sm:inline">Próxima</span>
+                    <ChevronRight className="w-4 h-4" />
+                  </button>
+                </div>
+              </div>
+            )}
           </div>
         </div>
       )}
@@ -1704,14 +1817,20 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({
             </ul>
           </div>
 
-          <div className="flex justify-end">
+          <div className="flex flex-wrap items-center justify-end gap-4">
+            {savedSettingsSuccess && (
+              <span className="text-emerald-800 bg-emerald-100 border border-emerald-300 font-bold text-xs sm:text-sm px-4 py-2.5 rounded-xl flex items-center gap-2 shadow-xs animate-pulse">
+                <CheckCircle2 className="w-5 h-5 text-emerald-600 shrink-0" />
+                Configurações Salvas com Sucesso!
+              </span>
+            )}
             <button
               type="submit"
               disabled={loading}
-              className="py-3 px-8 rounded-xl bg-orange-500 hover:bg-orange-600 text-white font-bold text-sm shadow-md shadow-orange-500/20 flex items-center gap-2 cursor-pointer disabled:opacity-50"
+              className="py-3 px-8 rounded-xl bg-orange-500 hover:bg-orange-600 text-white font-bold text-sm shadow-md shadow-orange-500/20 flex items-center gap-2 cursor-pointer disabled:opacity-50 transition-all active:scale-98"
             >
               <Save className="w-4 h-4" />
-              <span>Salvar Configurações</span>
+              <span>{loading ? 'Salvando...' : 'Salvar Configurações'}</span>
             </button>
           </div>
 
