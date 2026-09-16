@@ -6,6 +6,7 @@ import { createServer as createViteServer } from "vite";
 import dotenv from "dotenv";
 import { GoogleGenAI } from "@google/genai";
 import { Product, SiteSettings } from "./src/types";
+import { generateStaticFeeds } from "./scripts/build-static";
 
 dotenv.config();
 
@@ -61,6 +62,11 @@ function writeProducts(products: Product[]): boolean {
     const jsonStr = JSON.stringify(products, null, 2);
     fs.writeFileSync(PRODUCTS_FILE, jsonStr, "utf-8");
     fs.writeFileSync(PUBLIC_PRODUCTS_FILE, jsonStr, "utf-8");
+    try {
+      generateStaticFeeds();
+    } catch (e) {
+      console.error("Error updating static feeds:", e);
+    }
     return true;
   } catch (error) {
     console.error("Error writing products.json:", error);
@@ -1396,6 +1402,12 @@ function renderHtmlWithProductMeta(template: string, prod: any): string {
 // ==================== VITE MIDDLEWARE / STATIC ====================
 
 async function startServer() {
+  try {
+    generateStaticFeeds();
+  } catch (e) {
+    console.error("Initial static feed generation failed:", e);
+  }
+
   if (process.env.NODE_ENV !== "production") {
     const vite = await createViteServer({
       server: { middlewareMode: true },
