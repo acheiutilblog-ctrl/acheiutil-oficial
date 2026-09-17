@@ -575,3 +575,77 @@
   box-shadow: 0 6px 20px rgba(245, 158, 11, 0.5);
 }
 
+/* ==========================================================================
+   Tabelas de Ficha Técnica e Comparativos em Artigos (wp-block-table)
+   ========================================================================== */
+.wp-block-table,
+figure.wp-block-table {
+  margin: 2rem 0 !important;
+  width: 100% !important;
+  overflow-x: auto;
+  border-radius: 1rem !important;
+  border: 1px solid #e2e8f0 !important;
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.05);
+  background-color: #ffffff;
+}
+
+.wp-block-table table,
+figure.wp-block-table table {
+  width: 100% !important;
+  border-collapse: collapse !important;
+  text-align: left;
+  font-size: 0.875rem;
+}
+
+.wp-block-table thead,
+figure.wp-block-table thead {
+  background-color: #f1f5f9;
+  border-bottom: 2px solid #cbd5e1;
+}
+
+.wp-block-table th,
+figure.wp-block-table th {
+  padding: 0.875rem 1.25rem !important;
+  font-weight: 700 !important;
+  color: #0f172a !important;
+  text-transform: uppercase;
+  font-size: 0.75rem !important;
+  letter-spacing: 0.05em;
+  border: none !important;
+}
+
+.wp-block-table td,
+figure.wp-block-table td {
+  padding: 0.875rem 1.25rem !important;
+  color: #334155 !important;
+  border-bottom: 1px solid #f1f5f9 !important;
+  line-height: 1.5;
+  border-top: none !important;
+  border-left: none !important;
+  border-right: none !important;
+}
+
+.wp-block-table tbody tr:nth-child(even),
+figure.wp-block-table tbody tr:nth-child(even) {
+  background-color: #f8fafc;
+}
+
+.wp-block-table tbody tr:hover,
+figure.wp-block-table tbody tr:hover {
+  background-color: #f1f5f9/60;
+}
+
+.wp-block-table tbody tr:last-child td,
+figure.wp-block-table tbody tr:last-child td {
+  border-bottom: none !important;
+}
+
+.wp-block-table td:first-child,
+figure.wp-block-table td:first-child {
+  font-weight: 600 !important;
+  color: #0f172a !important;
+  width: 35%;
+  min-width: 140px;
+}
+
+

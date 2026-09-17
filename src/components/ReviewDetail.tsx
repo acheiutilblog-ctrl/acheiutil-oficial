@@ -221,7 +221,7 @@ export const ReviewDetail: React.FC<ReviewDetailProps> = ({
             <button
               onClick={() => {
                 const url = encodeURIComponent(productShareUrl);
-                const text = encodeURIComponent(`Análise do Sr. Detetive: ${product.title} vale a pena? Confira:`);
+                const text = encodeURIComponent(`Análise sincera acheiutil.com: ${product.title} vale a pena? Confira:`);
                 window.open(`https://twitter.com/intent/tweet?url=${url}&text=${text}`, '_blank');
               }}
               className="w-8 h-8 rounded-lg bg-slate-900 hover:bg-black text-white transition-all hover:scale-105 active:scale-95 flex items-center justify-center cursor-pointer shadow-xs"
@@ -533,7 +533,7 @@ export const ReviewDetail: React.FC<ReviewDetailProps> = ({
               {product.reviewContent.includes('<p') || product.reviewContent.includes('<h') || product.reviewContent.includes('<style') ? (
                 <div 
                   id="review-article-body"
-                  className="space-y-4 [&>h2]:text-xl [&>h2]:font-bold [&>h2]:text-slate-900 [&>h2]:mt-6 [&>h3]:text-lg [&>h3]:font-bold [&>h3]:text-slate-900 [&>h3]:mt-4 [&>p]:text-slate-700 [&>p]:leading-relaxed [&>ul]:list-disc [&>ul]:pl-5 [&>ul]:space-y-1.5 [&>ol]:list-decimal [&>ol]:pl-5 [&>ol]:space-y-1.5 [&>a]:text-orange-600 [&>a]:font-bold hover:[&>a]:underline [&_img]:rounded-2xl [&_img]:my-4 [&_img]:max-w-full [&_img]:border [&_img]:border-slate-200"
+                  className="space-y-4 [&>h2]:text-xl [&>h2]:font-bold [&>h2]:text-slate-900 [&>h2]:mt-6 [&>h3]:text-lg [&>h3]:font-bold [&>h3]:text-slate-900 [&>h3]:mt-4 [&>p]:text-slate-700 [&>p]:leading-relaxed [&>ul]:list-disc [&>ul]:pl-5 [&>ul]:space-y-1.5 [&>ol]:list-decimal [&>ol]:pl-5 [&>ol]:space-y-1.5 [&>a]:text-orange-600 [&>a]:font-bold hover:[&>a]:underline [&_img]:rounded-2xl [&_img]:my-4 [&_img]:max-w-full [&_img]:border [&_img]:border-slate-200 [&_figure]:my-6 [&_figure]:rounded-2xl [&_figure]:border [&_figure]:border-slate-200 [&_figure]:overflow-x-auto [&_figure]:shadow-xs [&_table]:w-full [&_table]:border-collapse [&_thead]:bg-slate-100 [&_thead]:border-b [&_thead]:border-slate-200 [&_th]:px-4 [&_th]:py-3 [&_th]:text-slate-800 [&_th]:font-bold [&_th]:text-left [&_th]:text-xs [&_th]:uppercase [&_th]:tracking-wider [&_td]:px-4 [&_td]:py-3 [&_td]:border-b [&_td]:border-slate-100 [&_td]:text-sm [&_td]:text-slate-700 [&_td:first-child]:font-semibold [&_td:first-child]:text-slate-900 [&_td:first-child]:w-1/3 [&_tbody_tr:nth-child(even)]:bg-slate-50/60"
                   dangerouslySetInnerHTML={{ 
                     __html: product.reviewContent
                       .replace(/^(\s*<p[^>]*>\s*<\/p>\s*)?(&#8220;|[“”"'])\s*`*html\s*/i, '')
