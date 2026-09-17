@@ -8,7 +8,9 @@ import {
   Sparkles, 
   Send, 
   Facebook, 
-  Twitter 
+  Twitter,
+  Instagram,
+  Music2
 } from 'lucide-react';
 
 interface ShareRecommendationBoxProps {
@@ -31,6 +33,7 @@ export const ShareRecommendationBox: React.FC<ShareRecommendationBoxProps> = ({
   variant = 'card',
 }) => {
   const [copied, setCopied] = useState(false);
+  const [shareFeedback, setShareFeedback] = useState<string | null>(null);
 
   // Guarantee that the URL is specific to the product if available
   const resolvedUrl = shareUrl || (typeof window !== 'undefined' ? window.location.href : 'https://acheiutil.com');
@@ -58,6 +61,48 @@ export const ShareRecommendationBox: React.FC<ShareRecommendationBoxProps> = ({
   const handleShareFacebook = () => {
     const encodedUrl = encodeURIComponent(resolvedUrl);
     window.open(`https://www.facebook.com/sharer/sharer.php?u=${encodedUrl}`, '_blank');
+  };
+
+  const handleShareInstagram = async () => {
+    if (typeof navigator !== 'undefined' && navigator.share) {
+      try {
+        await navigator.share({
+          title: resolvedTitle,
+          text: textToShare,
+          url: resolvedUrl,
+        });
+        return;
+      } catch (err) {
+        // Fallback below
+      }
+    }
+    if (navigator.clipboard) {
+      navigator.clipboard.writeText(resolvedUrl);
+      setShareFeedback('Link copiado! Cole na figurinha de Link dos seus Stories ou envie no Direct do Instagram 📸');
+      setTimeout(() => setShareFeedback(null), 5000);
+    }
+    window.open('https://www.instagram.com/', '_blank');
+  };
+
+  const handleShareTikTok = async () => {
+    if (typeof navigator !== 'undefined' && navigator.share) {
+      try {
+        await navigator.share({
+          title: resolvedTitle,
+          text: textToShare,
+          url: resolvedUrl,
+        });
+        return;
+      } catch (err) {
+        // Fallback below
+      }
+    }
+    if (navigator.clipboard) {
+      navigator.clipboard.writeText(resolvedUrl);
+      setShareFeedback('Link copiado! Cole na sua Bio ou mencione nos comentários do TikTok 🎵');
+      setTimeout(() => setShareFeedback(null), 5000);
+    }
+    window.open('https://www.tiktok.com/', '_blank');
   };
 
   const handleSharePinterest = () => {
@@ -101,12 +146,20 @@ export const ShareRecommendationBox: React.FC<ShareRecommendationBoxProps> = ({
             <span>WhatsApp</span>
           </button>
           <button
-            onClick={handleShareTelegram}
-            className="px-2 py-1 rounded-lg bg-sky-500 hover:bg-sky-600 text-white font-bold transition-colors cursor-pointer flex items-center gap-1 text-[11px]"
-            title="Compartilhar no Telegram"
+            onClick={handleShareInstagram}
+            className="px-2 py-1 rounded-lg bg-gradient-to-tr from-amber-500 via-rose-500 to-purple-600 text-white font-bold transition-opacity hover:opacity-90 cursor-pointer flex items-center gap-1 text-[11px]"
+            title="Compartilhar no Instagram"
           >
-            <Send className="w-3 h-3 fill-white" />
-            <span>Telegram</span>
+            <Instagram className="w-3 h-3" />
+            <span>Instagram</span>
+          </button>
+          <button
+            onClick={handleShareTikTok}
+            className="px-2 py-1 rounded-lg bg-slate-950 hover:bg-black text-white font-bold transition-colors cursor-pointer flex items-center gap-1 text-[11px]"
+            title="Compartilhar no TikTok"
+          >
+            <Music2 className="w-3 h-3 text-cyan-400" />
+            <span>TikTok</span>
           </button>
           <button
             onClick={handleShareFacebook}
@@ -124,6 +177,11 @@ export const ShareRecommendationBox: React.FC<ShareRecommendationBoxProps> = ({
             {copied ? 'Copiado!' : 'Copiar'}
           </button>
         </div>
+        {shareFeedback && (
+          <p className="text-[10px] text-orange-900 bg-orange-100/90 rounded-md p-1.5 font-medium leading-tight">
+            {shareFeedback}
+          </p>
+        )}
       </div>
     );
   }
@@ -167,6 +225,24 @@ export const ShareRecommendationBox: React.FC<ShareRecommendationBoxProps> = ({
             >
               <MessageSquare className="w-3.5 h-3.5 fill-white" />
               <span>WhatsApp</span>
+            </button>
+
+            <button
+              onClick={handleShareInstagram}
+              className="px-3.5 py-2.5 rounded-xl bg-gradient-to-tr from-amber-500 via-rose-500 to-purple-600 hover:opacity-90 text-white font-bold text-xs transition-all shadow-sm cursor-pointer flex items-center gap-1.5"
+              title="Compartilhar no Instagram"
+            >
+              <Instagram className="w-3.5 h-3.5" />
+              <span>Instagram</span>
+            </button>
+
+            <button
+              onClick={handleShareTikTok}
+              className="px-3.5 py-2.5 rounded-xl bg-slate-950 hover:bg-black text-white font-bold text-xs transition-all shadow-sm cursor-pointer flex items-center gap-1.5 border border-slate-800"
+              title="Compartilhar no TikTok"
+            >
+              <Music2 className="w-3.5 h-3.5 text-cyan-400" />
+              <span>TikTok</span>
             </button>
 
             <button
@@ -219,6 +295,13 @@ export const ShareRecommendationBox: React.FC<ShareRecommendationBoxProps> = ({
             </button>
           </div>
         </div>
+
+        {shareFeedback && (
+          <div className="mt-3 p-2.5 rounded-xl bg-orange-100/90 text-orange-900 text-xs font-semibold flex items-center justify-between animate-fadeIn">
+            <span>{shareFeedback}</span>
+            <button onClick={() => setShareFeedback(null)} className="text-orange-700 hover:text-orange-950 font-bold ml-2">✕</button>
+          </div>
+        )}
       </div>
     );
   }
@@ -262,11 +345,33 @@ export const ShareRecommendationBox: React.FC<ShareRecommendationBoxProps> = ({
           <button
             id="btn-share-whatsapp"
             onClick={handleShareWhatsApp}
-            className="flex-1 sm:flex-none px-4 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs sm:text-sm transition-all duration-200 shadow-md shadow-emerald-600/20 hover:scale-105 cursor-pointer flex items-center justify-center gap-1.5"
+            className="flex-1 sm:flex-none px-3.5 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs sm:text-sm transition-all duration-200 shadow-md shadow-emerald-600/20 hover:scale-105 cursor-pointer flex items-center justify-center gap-1.5"
             title="Mandar no WhatsApp"
           >
             <MessageSquare className="w-4 h-4 fill-white" />
             <span>WhatsApp</span>
+          </button>
+
+          {/* Instagram */}
+          <button
+            id="btn-share-instagram"
+            onClick={handleShareInstagram}
+            className="flex-1 sm:flex-none px-3.5 py-2.5 rounded-xl bg-gradient-to-tr from-amber-500 via-rose-500 to-purple-600 hover:opacity-95 text-white font-bold text-xs sm:text-sm transition-all duration-200 shadow-md shadow-rose-500/20 hover:scale-105 cursor-pointer flex items-center justify-center gap-1.5"
+            title="Compartilhar nos Stories ou Direct do Instagram"
+          >
+            <Instagram className="w-4 h-4" />
+            <span>Instagram</span>
+          </button>
+
+          {/* TikTok */}
+          <button
+            id="btn-share-tiktok"
+            onClick={handleShareTikTok}
+            className="flex-1 sm:flex-none px-3.5 py-2.5 rounded-xl bg-slate-950 hover:bg-black text-white font-bold text-xs sm:text-sm transition-all duration-200 shadow-md shadow-slate-950/20 hover:scale-105 cursor-pointer flex items-center justify-center gap-1.5 border border-slate-800"
+            title="Compartilhar no TikTok"
+          >
+            <Music2 className="w-4 h-4 text-cyan-400" />
+            <span>TikTok</span>
           </button>
 
           {/* Telegram */}
@@ -335,6 +440,14 @@ export const ShareRecommendationBox: React.FC<ShareRecommendationBoxProps> = ({
 
         </div>
       </div>
+
+      {shareFeedback && (
+        <div className="mt-4 p-3 rounded-2xl bg-orange-100 border border-orange-200 text-orange-950 text-xs sm:text-sm font-semibold flex items-center justify-between animate-fadeIn">
+          <span>{shareFeedback}</span>
+          <button onClick={() => setShareFeedback(null)} className="text-orange-800 hover:text-orange-950 font-bold ml-2">✕</button>
+        </div>
+      )}
     </section>
   );
 };
+

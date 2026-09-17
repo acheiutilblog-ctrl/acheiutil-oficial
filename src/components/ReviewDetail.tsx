@@ -20,6 +20,8 @@ import {
   Info,
   BadgePercent,
   BookOpen,
+  Instagram,
+  Music2,
 } from 'lucide-react';
 import { Product } from '../types';
 import { updatePageSEO } from '../lib/seo';
@@ -142,6 +144,32 @@ export const ReviewDetail: React.FC<ReviewDetailProps> = ({
             >
               <Share2 className="w-3.5 h-3.5 text-emerald-600" />
               <span>WhatsApp</span>
+            </button>
+            <button
+              onClick={() => {
+                if (navigator.clipboard) {
+                  navigator.clipboard.writeText(productShareUrl);
+                }
+                window.open('https://www.instagram.com/', '_blank');
+              }}
+              className="px-2.5 py-1.5 rounded-lg bg-rose-50 hover:bg-rose-100 text-rose-700 transition-colors text-xs flex items-center gap-1.5 font-bold cursor-pointer border border-rose-200/60"
+              title="Compartilhar no Instagram (Link copiado para Stories/Direct)"
+            >
+              <Instagram className="w-3.5 h-3.5 text-rose-600" />
+              <span>Instagram</span>
+            </button>
+            <button
+              onClick={() => {
+                if (navigator.clipboard) {
+                  navigator.clipboard.writeText(productShareUrl);
+                }
+                window.open('https://www.tiktok.com/', '_blank');
+              }}
+              className="px-2.5 py-1.5 rounded-lg bg-slate-900 hover:bg-black text-white transition-colors text-xs flex items-center gap-1.5 font-bold cursor-pointer border border-slate-800"
+              title="Compartilhar no TikTok (Link copiado para Bio/Vídeo)"
+            >
+              <Music2 className="w-3.5 h-3.5 text-cyan-400" />
+              <span>TikTok</span>
             </button>
             <button
               onClick={() => {
