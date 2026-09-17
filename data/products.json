@@ -33,34 +33,115 @@
       "Exige alguns minutos de adaptação para pegar a firmeza do movimento",
       "Menos prático para segurar pedaços minúsculos ou pontinhas finais de legumes"
     ],
-    "verdict": "Se você tem receio de facas afiadas, já cortou os dedos picando cebola ou quer ensinar quem está começando na cozinha, o protetor em inox vale cada centavo. É duradouro para a vida toda e tem preço muito acessível.",
+    "verdict": {
+      "score": 9.5,
+      "badge": "Cozinha Segura",
+      "summary": "Se você tem receio de facas afiadas, já cortou os dedos picando cebola ou quer ensinar quem está começando na cozinha, o protetor em inox vale cada centavo.",
+      "recommendedFor": "Iniciantes na culinária, quem pica legumes com frequência e busca rapidez sem risco de acidentes, ou famílias com adolescentes aprendendo a cozinhar.",
+      "notRecommendedFor": "Quem já possui técnica profissional avançada de empunhadura em garra e dispensa acessórios extras."
+    },
     "specifications": [
       {
-        "name": "Material",
+        "label": "Material",
         "value": "Aço Inoxidável (Inox)"
       },
       {
-        "name": "Tipo de Fixação",
+        "label": "Tipo de Fixação",
         "value": "Aro com anel traseiro aberto e ajustável"
       },
       {
-        "name": "Dimensões",
+        "label": "Dimensões",
         "value": "Aprox. 6,5 cm de largura x 4,8 cm de altura"
       },
       {
-        "name": "Indicação de Uso",
+        "label": "Indicação de Uso",
         "value": "Corte de legumes, verduras, queijos, carnes e frios"
       },
       {
-        "name": "Compatibilidade",
+        "label": "Compatibilidade",
         "value": "Destros e canhotos (uso universal)"
       },
       {
-        "name": "Lavagem",
+        "label": "Lavagem",
         "value": "Água e detergente ou lava-louças"
       }
     ],
-    "featured": true
+    "featured": true,
+    "createdAt": "2026-09-17T13:30:00.000Z",
+    "updatedAt": "2026-09-17T13:30:00.000Z"
+  },
+  {
+    "id": "wp-5701",
+    "title": "Compressor Bomba de Ar Portátil Elétrica Bivolt para Colchão Inflável, Sofá e Boias - Gurumania",
+    "slug": "compressor-bomba-ar-portatil-eletrica-bivolt-gurumania",
+    "category": "casa",
+    "categoryName": "Casa & Lazer",
+    "price": 39.9,
+    "oldPrice": "79,90",
+    "rating": 4.8,
+    "reviewCount": 412,
+    "image": "/images/inflador-eletrico-bivolt.jpg",
+    "images": [
+      "/images/inflador-eletrico-bivolt.jpg"
+    ],
+    "affiliateUrl": "https://meli.la/2UnFyzU",
+    "badge": "Mais Vendido",
+    "description": "Compressor elétrico portátil bivolt com 3 bicos para encher e esvaziar sofás infláveis, colchões de camping, piscinas e boias em menos de 2 minutos.",
+    "date": "2026-09-17",
+    "readTime": "3 min de leitura",
+    "author": {
+      "name": "Equipe AcheiUtil",
+      "avatar": "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&q=80&w=200",
+      "role": "Especialista em Camping e Casa"
+    },
+    "pros": [
+      "Enche e esvazia em menos de 2 minutos sem nenhum esforço manual",
+      "Acompanha 3 bicos cônicos de diferentes calibres para qualquer tipo de inflável",
+      "Aparelho bivolt compacto que cabe na palma da mão",
+      "Excelente custo-benefício abaixo de R$ 45"
+    ],
+    "cons": [
+      "Requer tomada elétrica por perto (não é a bateria interna)"
+    ],
+    "verdict": {
+      "score": 9.6,
+      "badge": "Indispensável para Infláveis",
+      "summary": "Acessório indispensável para quem comprou sofá ou colchão inflável. Poupa tempo e fôlego, esvaziando e enchendo em segundos com bicos de encaixe universal.",
+      "recommendedFor": "Quem tem poltrona ou sofá inflável, colchão de camping, piscina de plástico ou boias de verão.",
+      "notRecommendedFor": "Quem precisa encher pneus de carro ou bicicleta de alta pressão (requer compressor de 120 PSI)."
+    },
+    "specifications": [
+      {
+        "label": "Tipo",
+        "value": "Compressor / Inflador Elétrico Portátil"
+      },
+      {
+        "label": "Voltagem",
+        "value": "Bivolt (110V / 220V automático)"
+      },
+      {
+        "label": "Funções",
+        "value": "Inflar (encher) e Desinflar (sucção rápida para esvaziar)"
+      },
+      {
+        "label": "Acessórios",
+        "value": "3 bicos adaptadores cônicos universais"
+      },
+      {
+        "label": "Compatibilidade",
+        "value": "Poltronas e sofás infláveis, colchões de ar, boias e piscinas"
+      }
+    ],
+    "reviewContent": "<p class=\"has-luminous-vivid-orange-color has-text-color has-link-color wp-elements-1 wp-block-paragraph\"><strong>Transparência editorial:</strong> Este artigo contém links de afiliado oficiais do Mercado Livre. Ao comprar através deles, você garante a oferta oficial e o AcheiUtil pode receber uma pequena comissão.</p><p class=\"wp-block-paragraph\">Encher um colchão ou poltrona inflável no pulmão ou com bombinha de bicicleta comum é uma tarefa demorada e cansativa. O <strong>Compressor Bomba de Ar Elétrica Portátil Bivolt Gurumania</strong> resolve isso em menos de 2 minutos.</p><h2 class=\"wp-block-heading\"><span style=\"color: var(--theme-palette-color-2, #1559ed);\" class=\"stk-highlight\">Principais Vantagens</span></h2><ul class=\"wp-block-list\"><li><strong>3 Bicos Adaptadores:</strong> Encaixam na grande maioria das válvulas de colchões, poltronas, boias e piscinas.</li><li><strong>Função Dupla (Enche e Esvazia):</strong> Além de inflar, possui bocal de sucção para tirar todo o ar na hora de guardar, deixando o inflável bem fininho para dobrar.</li><li><strong>Leve e Compacto:</strong> Cabe na palma da mão e na mochila de viagem sem ocupar espaço.</li></ul><div class=\"my-4 p-4 rounded-xl border border-emerald-300 bg-emerald-50 text-emerald-950 font-bold text-center\"><a href=\"https://meli.la/2UnFyzU\" target=\"_blank\" rel=\"sponsored noopener noreferrer\" class=\"text-emerald-700 underline text-base\">Ver Preço Promocional e Avaliações no Mercado Livre &rarr;</a></div>",
+    "originalPrice": 79.9,
+    "discountPercentage": 50,
+    "installments": "em até 3x de R$ 13,30 sem juros",
+    "createdAt": "2026-09-17T12:00:00.000Z",
+    "updatedAt": "2026-09-17T12:00:00.000Z",
+    "summary": "Compressor elétrico portátil bivolt com 3 bicos para encher e esvaziar sofás infláveis, colchões de camping, piscinas e boias em menos de 2 minutos sem esforço.",
+    "freeShipping": false,
+    "isFull": true,
+    "bestSeller": true
   },
   {
     "id": "wp-5700",
@@ -140,7 +221,9 @@
         "value": "Não acompanha (Recomendado: Bomba Elétrica Portátil Bivolt)"
       }
     ],
-    "featured": true
+    "featured": true,
+    "createdAt": "2026-09-17T11:00:00.000Z",
+    "updatedAt": "2026-09-17T11:00:00.000Z"
   },
   {
     "id": "wp-5699",
@@ -3264,66 +3347,5 @@
     "createdAt": "2025-12-18T08:07:39",
     "updatedAt": "2026-09-13T14:30:00",
     "wordpressPostId": 113
-  },
-  {
-    "id": "wp-5701",
-    "title": "Compressor Bomba de Ar Portátil Elétrica Bivolt para Colchão Inflável, Sofá e Boias - Gurumania",
-    "slug": "compressor-bomba-ar-portatil-eletrica-bivolt-gurumania",
-    "category": "casa",
-    "categoryName": "Casa & Lazer",
-    "price": "39,90",
-    "oldPrice": "79,90",
-    "rating": 4.8,
-    "reviewCount": 412,
-    "image": "/images/inflador-eletrico-bivolt.jpg",
-    "images": [
-      "/images/inflador-eletrico-bivolt.jpg"
-    ],
-    "affiliateUrl": "https://meli.la/2UnFyzU",
-    "badge": "Mais Vendido",
-    "description": "Compressor elétrico portátil bivolt com 3 bicos para encher e esvaziar sofás infláveis, colchões de camping, piscinas e boias em menos de 2 minutos.",
-    "date": "2026-09-17",
-    "readTime": "3 min de leitura",
-    "author": {
-      "name": "Equipe AcheiUtil",
-      "avatar": "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&q=80&w=200",
-      "role": "Especialista em Camping e Casa"
-    },
-    "pros": [
-      "Enche e esvazia em menos de 2 minutos sem nenhum esforço manual",
-      "Acompanha 3 bicos cônicos de diferentes calibres para qualquer tipo de inflável",
-      "Aparelho bivolt compacto que cabe na palma da mão",
-      "Excelente custo-benefício abaixo de R$ 45"
-    ],
-    "cons": [
-      "Requer tomada elétrica por perto (não é a bateria interna)"
-    ],
-    "verdict": {
-      "score": 9.6,
-      "summary": "Acessório indispensável para quem comprou sofá ou colchão inflável. Poupa tempo e fôlego, esvaziando e enchendo em segundos com bicos de encaixe universal."
-    },
-    "specifications": [
-      {
-        "label": "Tipo",
-        "value": "Compressor / Inflador Elétrico Portátil"
-      },
-      {
-        "label": "Voltagem",
-        "value": "Bivolt (110V / 220V)"
-      },
-      {
-        "label": "Funções",
-        "value": "Inflar (encher) e Desinflar (sugar o ar)"
-      },
-      {
-        "label": "Acessórios",
-        "value": "3 bicos adaptadores universais"
-      },
-      {
-        "label": "Compatibilidade",
-        "value": "Poltronas infláveis, colchões de ar, piscinas e boias"
-      }
-    ],
-    "reviewContent": "<p class=\"has-luminous-vivid-orange-color has-text-color has-link-color wp-elements-1 wp-block-paragraph\"><strong>Transparência editorial:</strong> Este artigo contém links de afiliado oficiais do Mercado Livre. Ao comprar através deles, você garante a oferta oficial e o AcheiUtil pode receber uma pequena comissão.</p><p class=\"wp-block-paragraph\">Encher um colchão ou poltrona inflável no pulmão ou com bombinha de bicicleta comum é uma tarefa demorada e cansativa. O <strong>Compressor Bomba de Ar Elétrica Portátil Bivolt Gurumania</strong> resolve isso em menos de 2 minutos.</p><h2 class=\"wp-block-heading\"><span style=\"color: var(--theme-palette-color-2, #1559ed);\" class=\"stk-highlight\">Principais Vantagens</span></h2><ul class=\"wp-block-list\"><li><strong>3 Bicos Adaptadores:</strong> Encaixam na grande maioria das válvulas de colchões, poltronas, boias e piscinas.</li><li><strong>Função Dupla (Enche e Esvazia):</strong> Além de inflar, possui bocal de sucção para tirar todo o ar na hora de guardar, deixando o inflável bem fininho para dobrar.</li><li><strong>Leve e Compacto:</strong> Cabe na palma da mão e na mochila de viagem sem ocupar espaço.</li></ul><div class=\"my-4 p-4 rounded-xl border border-emerald-300 bg-emerald-50 text-emerald-950 font-bold text-center\"><a href=\"https://meli.la/2UnFyzU\" target=\"_blank\" rel=\"sponsored noopener noreferrer\" class=\"text-emerald-700 underline text-base\">Ver Preço Promocional e Avaliações no Mercado Livre &rarr;</a></div>"
   }
 ]
