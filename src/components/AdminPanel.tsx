@@ -1707,6 +1707,57 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({
             </div>
           </div>
 
+          {/* Card da Capa Oficial Atualizada para Facebook / Redes Sociais */}
+          <div className="bg-white rounded-2xl p-6 border border-slate-200 shadow-xs">
+            <div className="flex items-start justify-between gap-4 mb-4">
+              <div>
+                <h3 className="text-base font-bold text-slate-900 flex items-center gap-2">
+                  <ImageIcon className="w-5 h-5 text-blue-600" />
+                  Capa Oficial para Facebook (Atualizada com o Sr. Detetive)
+                </h3>
+                <p className="text-xs text-slate-500 mt-1">
+                  Capa panorâmica em alta definição (300 DPI) com o mascote do Sr. Detetive, ícones 3D das categorias e layout pronto para as medidas da Página do Facebook.
+                </p>
+              </div>
+            </div>
+
+            <div className="flex flex-col gap-4 p-4 rounded-xl bg-slate-50 border border-slate-200/80">
+              <div className="relative w-full aspect-16/9 rounded-xl overflow-hidden border border-slate-200 bg-slate-900 shadow-xs">
+                <img
+                  src="/facebook-cover.jpg"
+                  alt="Capa Facebook AcheiUtil"
+                  className="w-full h-full object-cover"
+                />
+              </div>
+
+              <div className="flex flex-wrap items-center justify-between gap-3 pt-2">
+                <div className="text-xs text-slate-600 font-medium flex items-center gap-1.5">
+                  <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
+                  <span>Formato ideal para computador e celular no Facebook.</span>
+                </div>
+
+                <div className="flex items-center gap-2 w-full sm:w-auto">
+                  <a
+                    href="/facebook-cover.jpg"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex-1 sm:flex-none inline-flex items-center justify-center gap-1.5 px-4 py-2.5 rounded-xl border border-slate-300 bg-white hover:bg-slate-50 text-slate-700 font-semibold text-xs transition-colors"
+                  >
+                    Visualizar em tela cheia
+                  </a>
+                  <a
+                    href="/facebook-cover.jpg"
+                    download="capa-facebook-acheiutil.jpg"
+                    className="flex-1 sm:flex-none inline-flex items-center justify-center gap-1.5 px-4 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs shadow-sm transition-colors"
+                  >
+                    <Upload className="w-3.5 h-3.5 rotate-180" />
+                    Baixar Capa (JPG)
+                  </a>
+                </div>
+              </div>
+            </div>
+          </div>
+
           <form onSubmit={handleSaveSettingsSubmit} className="flex flex-col gap-6">
           
           <div className="bg-white rounded-2xl p-6 border border-slate-200 shadow-xs">
