@@ -22,6 +22,10 @@ import {
   BookOpen,
   Instagram,
   Music2,
+  MessageSquare,
+  Facebook,
+  Twitter,
+  Send,
 } from 'lucide-react';
 import { Product } from '../types';
 import { updatePageSEO } from '../lib/seo';
@@ -135,16 +139,19 @@ export const ReviewDetail: React.FC<ReviewDetailProps> = ({
             </span>
           </nav>
 
-          {/* Social share & Indicar */}
+          {/* Social share & Indicar - Compact Logo Icons */}
           <div className="flex items-center gap-1.5 flex-wrap">
+            <span className="text-xs font-bold text-slate-500 mr-0.5 hidden sm:inline">Compartilhar:</span>
+            
             <button
               onClick={handleShareWhatsApp}
-              className="px-2.5 py-1.5 rounded-lg bg-emerald-50 hover:bg-emerald-100 text-emerald-700 transition-colors text-xs flex items-center gap-1.5 font-bold cursor-pointer border border-emerald-200/60"
-              title="Indicar pelo WhatsApp"
+              className="w-8 h-8 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white transition-all hover:scale-105 active:scale-95 flex items-center justify-center cursor-pointer shadow-xs"
+              title="Compartilhar no WhatsApp"
+              aria-label="WhatsApp"
             >
-              <Share2 className="w-3.5 h-3.5 text-emerald-600" />
-              <span>WhatsApp</span>
+              <MessageSquare className="w-4 h-4 fill-white" />
             </button>
+
             <button
               onClick={() => {
                 if (navigator.clipboard) {
@@ -152,12 +159,13 @@ export const ReviewDetail: React.FC<ReviewDetailProps> = ({
                 }
                 window.open('https://www.instagram.com/', '_blank');
               }}
-              className="px-2.5 py-1.5 rounded-lg bg-rose-50 hover:bg-rose-100 text-rose-700 transition-colors text-xs flex items-center gap-1.5 font-bold cursor-pointer border border-rose-200/60"
+              className="w-8 h-8 rounded-lg bg-gradient-to-tr from-amber-500 via-rose-500 to-purple-600 hover:opacity-90 text-white transition-all hover:scale-105 active:scale-95 flex items-center justify-center cursor-pointer shadow-xs"
               title="Compartilhar no Instagram (Link copiado para Stories/Direct)"
+              aria-label="Instagram"
             >
-              <Instagram className="w-3.5 h-3.5 text-rose-600" />
-              <span>Instagram</span>
+              <Instagram className="w-4 h-4" />
             </button>
+
             <button
               onClick={() => {
                 if (navigator.clipboard) {
@@ -165,22 +173,37 @@ export const ReviewDetail: React.FC<ReviewDetailProps> = ({
                 }
                 window.open('https://www.tiktok.com/', '_blank');
               }}
-              className="px-2.5 py-1.5 rounded-lg bg-slate-900 hover:bg-black text-white transition-colors text-xs flex items-center gap-1.5 font-bold cursor-pointer border border-slate-800"
+              className="w-8 h-8 rounded-lg bg-slate-950 hover:bg-black text-white transition-all hover:scale-105 active:scale-95 flex items-center justify-center cursor-pointer border border-slate-800 shadow-xs"
               title="Compartilhar no TikTok (Link copiado para Bio/Vídeo)"
+              aria-label="TikTok"
             >
-              <Music2 className="w-3.5 h-3.5 text-cyan-400" />
-              <span>TikTok</span>
+              <Music2 className="w-4 h-4 text-cyan-400" />
             </button>
+
+            <button
+              onClick={() => {
+                const url = encodeURIComponent(productShareUrl);
+                window.open(`https://t.me/share/url?url=${url}&text=${encodeURIComponent(product.title)}`, '_blank');
+              }}
+              className="w-8 h-8 rounded-lg bg-sky-500 hover:bg-sky-600 text-white transition-all hover:scale-105 active:scale-95 flex items-center justify-center cursor-pointer shadow-xs"
+              title="Compartilhar no Telegram"
+              aria-label="Telegram"
+            >
+              <Send className="w-3.5 h-3.5 fill-white" />
+            </button>
+
             <button
               onClick={() => {
                 const url = encodeURIComponent(productShareUrl);
                 window.open(`https://www.facebook.com/sharer/sharer.php?u=${url}`, '_blank');
               }}
-              className="px-2.5 py-1.5 rounded-lg bg-blue-50 hover:bg-blue-100 text-blue-700 transition-colors text-xs flex items-center gap-1.5 font-bold cursor-pointer border border-blue-200/60"
+              className="w-8 h-8 rounded-lg bg-blue-600 hover:bg-blue-700 text-white transition-all hover:scale-105 active:scale-95 flex items-center justify-center cursor-pointer shadow-xs"
               title="Compartilhar no Facebook"
+              aria-label="Facebook"
             >
-              <span>Facebook</span>
+              <Facebook className="w-4 h-4 fill-white" />
             </button>
+
             <button
               onClick={() => {
                 const url = encodeURIComponent(productShareUrl);
@@ -188,36 +211,40 @@ export const ReviewDetail: React.FC<ReviewDetailProps> = ({
                 const media = encodeURIComponent(product.images?.[0] || '');
                 window.open(`https://pinterest.com/pin/create/button/?url=${url}&media=${media}&description=${desc}`, '_blank');
               }}
-              className="px-2.5 py-1.5 rounded-lg bg-rose-50 hover:bg-rose-100 text-rose-700 transition-colors text-xs flex items-center gap-1.5 font-bold cursor-pointer border border-rose-200/60"
+              className="w-8 h-8 rounded-lg bg-rose-600 hover:bg-rose-700 text-white transition-all hover:scale-105 active:scale-95 flex items-center justify-center cursor-pointer shadow-xs"
               title="Salvar no Pinterest"
+              aria-label="Pinterest"
             >
-              <span>Pinterest</span>
+              <span className="font-serif font-black text-xs leading-none">P</span>
             </button>
+
             <button
               onClick={() => {
                 const url = encodeURIComponent(productShareUrl);
                 const text = encodeURIComponent(`Análise do Sr. Detetive: ${product.title} vale a pena? Confira:`);
                 window.open(`https://twitter.com/intent/tweet?url=${url}&text=${text}`, '_blank');
               }}
-              className="px-2.5 py-1.5 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-800 transition-colors text-xs flex items-center gap-1.5 font-bold cursor-pointer border border-slate-200"
+              className="w-8 h-8 rounded-lg bg-slate-900 hover:bg-black text-white transition-all hover:scale-105 active:scale-95 flex items-center justify-center cursor-pointer shadow-xs"
               title="Compartilhar no X (Twitter)"
+              aria-label="X (Twitter)"
             >
-              <span>X</span>
+              <Twitter className="w-3.5 h-3.5 fill-white" />
             </button>
+
             <button
               onClick={handleCopyLink}
-              className="px-2.5 py-1.5 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 transition-colors text-xs flex items-center gap-1.5 font-semibold cursor-pointer border border-slate-200"
+              className={`w-8 h-8 rounded-lg border transition-all hover:scale-105 active:scale-95 flex items-center justify-center cursor-pointer shadow-xs ${
+                copied
+                  ? 'bg-emerald-50 border-emerald-300 text-emerald-700'
+                  : 'bg-white border-slate-200 text-slate-700 hover:bg-slate-100'
+              }`}
+              title={copied ? 'Link Copiado!' : 'Copiar Link'}
+              aria-label="Copiar Link"
             >
               {copied ? (
-                <>
-                  <Check className="w-3.5 h-3.5 text-emerald-600 stroke-[3]" />
-                  <span className="text-emerald-700 font-bold">Copiado!</span>
-                </>
+                <Check className="w-3.5 h-3.5 text-emerald-600 stroke-[3]" />
               ) : (
-                <>
-                  <Copy className="w-3.5 h-3.5 text-slate-500" />
-                  <span>Copiar Link</span>
-                </>
+                <Copy className="w-3.5 h-3.5 text-slate-600" />
               )}
             </button>
           </div>
