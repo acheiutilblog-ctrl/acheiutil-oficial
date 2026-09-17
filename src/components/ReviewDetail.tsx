@@ -208,7 +208,16 @@ export const ReviewDetail: React.FC<ReviewDetailProps> = ({
               onClick={() => {
                 const url = encodeURIComponent(productShareUrl);
                 const desc = encodeURIComponent(`${product.title} - Análise sincera no acheiutil.com`);
-                const media = encodeURIComponent(product.images?.[0] || '');
+                const rawMedia = product.images?.[0] || product.image || '';
+                let absoluteMedia = '';
+                if (rawMedia.startsWith('http://') || rawMedia.startsWith('https://')) {
+                  absoluteMedia = rawMedia;
+                } else if (typeof window !== 'undefined' && window.location.origin) {
+                  absoluteMedia = `${window.location.origin}${rawMedia.startsWith('/') ? '' : '/'}${rawMedia}`;
+                } else {
+                  absoluteMedia = `https://www.acheiutil.com${rawMedia.startsWith('/') ? '' : '/'}${rawMedia}`;
+                }
+                const media = encodeURIComponent(absoluteMedia);
                 window.open(`https://pinterest.com/pin/create/button/?url=${url}&media=${media}&description=${desc}`, '_blank');
               }}
               className="w-8 h-8 rounded-lg bg-rose-600 hover:bg-rose-700 text-white transition-all hover:scale-105 active:scale-95 flex items-center justify-center cursor-pointer shadow-xs"

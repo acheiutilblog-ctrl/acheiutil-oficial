@@ -107,14 +107,23 @@ export const ShareRecommendationBox: React.FC<ShareRecommendationBoxProps> = ({
 
   const handleSharePinterest = () => {
     const encodedUrl = encodeURIComponent(resolvedUrl);
-    const encodedMedia = encodeURIComponent(productImage || 'https://acheiutil.com/logo-detective.png');
+    const rawMedia = productImage || '/images/poltrona-inflavel-bege.jpg';
+    let absoluteMedia = '';
+    if (rawMedia.startsWith('http://') || rawMedia.startsWith('https://')) {
+      absoluteMedia = rawMedia;
+    } else if (typeof window !== 'undefined' && window.location.origin) {
+      absoluteMedia = `${window.location.origin}${rawMedia.startsWith('/') ? '' : '/'}${rawMedia}`;
+    } else {
+      absoluteMedia = `https://www.acheiutil.com${rawMedia.startsWith('/') ? '' : '/'}${rawMedia}`;
+    }
+    const encodedMedia = encodeURIComponent(absoluteMedia);
     const encodedDesc = encodeURIComponent(productName ? `Análise sincera: ${productName} - acheiutil.com` : 'Achados Úteis e Reviews no acheiutil.com');
     window.open(`https://pinterest.com/pin/create/button/?url=${encodedUrl}&media=${encodedMedia}&description=${encodedDesc}`, '_blank');
   };
 
   const handleShareX = () => {
     const encodedUrl = encodeURIComponent(resolvedUrl);
-    const tweetText = encodeURIComponent(`Análise sincera do Sr. Detetive: ${productName || 'Achado Útil no Mercado Livre'}`);
+    const tweetText = encodeURIComponent(`Análise sincera acheiutil.com: ${productName || 'Achado Útil no Mercado Livre'}`);
     window.open(`https://twitter.com/intent/tweet?url=${encodedUrl}&text=${tweetText}`, '_blank');
   };
 
