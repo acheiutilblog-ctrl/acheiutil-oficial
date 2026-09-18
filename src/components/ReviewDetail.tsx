@@ -63,6 +63,36 @@ export const ReviewDetail: React.FC<ReviewDetailProps> = ({
       .trim();
   };
 
+  // Normalize strings for duplicate comparison to prevent repeated paragraphs
+  const normalizeForComp = (str?: string) =>
+    (str || '')
+      .toLowerCase()
+      .replace(/<[^>]*>/g, ' ')
+      .replace(/[…\[\]\s.,;:!?"'“”\(\)-]+/g, ' ')
+      .trim();
+
+  const normSub = normalizeForComp(product.subtitle);
+  const normSum = normalizeForComp(product.summary);
+  const normReviewStart = normalizeForComp(product.reviewContent).slice(0, 100);
+
+  // Subtitle is duplicate if it matches the summary or the opening of the review content
+  const isSubtitleDuplicate =
+    Boolean(normSub) &&
+    ((Boolean(normSum) && (normSub.startsWith(normSum.slice(0, 40)) || normSum.startsWith(normSub.slice(0, 40)))) ||
+      (Boolean(normReviewStart) && normReviewStart.startsWith(normSub.slice(0, 40))));
+
+  // Pick the best curation summary: prefer verdict.summary if available and distinct from the intro paragraph
+  const curationVerdictText = product.verdict?.summary ? cleanSnippet(product.verdict.summary) : '';
+  const normVerdict = normalizeForComp(curationVerdictText);
+  const isVerdictDistinct =
+    Boolean(curationVerdictText) &&
+    !normVerdict.startsWith(normSum.slice(0, 40)) &&
+    !normVerdict.startsWith(normReviewStart.slice(0, 40));
+
+  const displayCurationSummary = isVerdictDistinct
+    ? curationVerdictText
+    : cleanSnippet(product.summary);
+
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
     updatePageSEO(product);
@@ -92,9 +122,21 @@ export const ReviewDetail: React.FC<ReviewDetailProps> = ({
     return () => clearTimeout(timer);
   }, [product]);
 
-  const formatBRL = (val: number) => {
-    return val.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+  const formatBRL = (val: number | string | undefined | null) => {
+    if (val === undefined || val === null) return 'R$ 0,00';
+    const num = typeof val === 'number' ? val : parseFloat(String(val).replace(/\./g, '').replace(',', '.'));
+    if (isNaN(num)) return 'R$ 0,00';
+    return num.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
   };
+
+  const verdictScore = typeof product.verdict === 'object' && product.verdict?.score
+    ? product.verdict.score
+    : 9.5;
+  const verdictSummary = typeof product.verdict === 'object' && product.verdict?.summary
+    ? product.verdict.summary
+    : (typeof product.verdict === 'string' ? product.verdict : (product.summary || product.subtitle || ''));
+  const verdictRecommended = typeof product.verdict === 'object' ? product.verdict?.recommendedFor : undefined;
+  const verdictNotRecommended = typeof product.verdict === 'object' ? product.verdict?.notRecommendedFor : undefined;
 
   const images = product.images && product.images.length > 0
     ? product.images
@@ -290,7 +332,7 @@ export const ReviewDetail: React.FC<ReviewDetailProps> = ({
                 {product.title}
               </h1>
 
-              {product.subtitle && (
+              {!isSubtitleDuplicate && product.subtitle && (
                 <p className="text-sm sm:text-base text-slate-600 mb-3">
                   {product.subtitle}
                 </p>
@@ -374,7 +416,7 @@ export const ReviewDetail: React.FC<ReviewDetailProps> = ({
                 <Sparkles className="w-4 h-4 text-orange-500" /> Resumo da Curadoria: Vale a Pena?
               </h2>
               <p className="text-sm text-slate-700 leading-relaxed">
-                {cleanSnippet(product.summary)}
+                {displayCurationSummary}
               </p>
             </div>
 
@@ -508,11 +550,11 @@ export const ReviewDetail: React.FC<ReviewDetailProps> = ({
                       <Award className="w-4 h-4 text-orange-400" /> Nota Achei Útil
                     </span>
                     <span className="text-xl font-black text-amber-300 font-['Outfit']">
-                      {product.verdict.score} / 10
+                      {verdictScore} / 10
                     </span>
                   </div>
                   <p className="text-xs text-blue-100/90 leading-snug">
-                    "{product.verdict.summary}"
+                    "{verdictSummary}"
                   </p>
                 </div>
               )}
@@ -580,7 +622,7 @@ export const ReviewDetail: React.FC<ReviewDetailProps> = ({
                   O Que Nós Mais Gostamos (Prós)
                 </h4>
                 <ul className="space-y-3 text-sm text-emerald-950">
-                  {product.pros.map((pro, index) => (
+                  {(product.pros || []).map((pro, index) => (
                     <li key={index} className="flex items-start gap-2.5">
                       <Check className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" />
                       <span>{pro}</span>
@@ -598,7 +640,7 @@ export const ReviewDetail: React.FC<ReviewDetailProps> = ({
                   Pontos de Atenção (Contras)
                 </h4>
                 <ul className="space-y-3 text-sm text-rose-950">
-                  {product.cons.map((con, index) => (
+                  {(product.cons || []).map((con, index) => (
                     <li key={index} className="flex items-start gap-2.5">
                       <Info className="w-4 h-4 text-rose-600 shrink-0 mt-0.5" />
                       <span>{con}</span>
@@ -611,26 +653,30 @@ export const ReviewDetail: React.FC<ReviewDetailProps> = ({
           </div>
 
           {/* Verdict Recommendation Box */}
-          {product.verdict && (
+          {product.verdict && (verdictRecommended || verdictNotRecommended) && (
             <div className="mt-10 bg-slate-50 rounded-2xl p-6 border border-slate-200">
               <h3 className="text-lg font-bold text-slate-900 mb-4 flex items-center gap-2">
                 <Award className="w-5 h-5 text-orange-500" /> Para Quem Este Produto é Recomendado?
               </h3>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
-                <div className="p-4 bg-white rounded-xl border border-emerald-200">
-                  <span className="font-bold text-emerald-800 block mb-1">👍 É ideal para:</span>
-                  <p className="text-slate-700">{product.verdict.recommendedFor}</p>
-                </div>
-                <div className="p-4 bg-white rounded-xl border border-amber-200">
-                  <span className="font-bold text-amber-800 block mb-1">⚠️ Pode não ser ideal para:</span>
-                  <p className="text-slate-700">{product.verdict.notRecommendedFor}</p>
-                </div>
+                {verdictRecommended && (
+                  <div className="p-4 bg-white rounded-xl border border-emerald-200">
+                    <span className="font-bold text-emerald-800 block mb-1">👍 É ideal para:</span>
+                    <p className="text-slate-700">{verdictRecommended}</p>
+                  </div>
+                )}
+                {verdictNotRecommended && (
+                  <div className="p-4 bg-white rounded-xl border border-amber-200">
+                    <span className="font-bold text-amber-800 block mb-1">⚠️ Pode não ser ideal para:</span>
+                    <p className="text-slate-700">{verdictNotRecommended}</p>
+                  </div>
+                )}
               </div>
             </div>
           )}
 
           {/* Specifications Table */}
-          {product.specifications && product.specifications.length > 0 && !product.reviewContent.includes('<table') && (
+          {product.specifications && product.specifications.length > 0 && !product.reviewContent.includes('<table') && !product.reviewContent.toLowerCase().includes('ficha técnica') && !product.reviewContent.toLowerCase().includes('ficha tecnica') && (
             <div className="mt-10 pt-8 border-t border-slate-100">
               <h3 className="text-xl font-bold text-slate-900 font-['Outfit'] mb-4">
                 Ficha Técnica e Especificações
@@ -641,7 +687,7 @@ export const ReviewDetail: React.FC<ReviewDetailProps> = ({
                     {product.specifications.map((spec, index) => (
                       <tr key={index} className={index % 2 === 0 ? 'bg-white' : 'bg-slate-50'}>
                         <td className="py-3 px-4 font-semibold text-slate-700 w-1/3 sm:w-1/4">
-                          {spec.label}
+                          {spec.label || (spec as any).name || 'Especificação'}
                         </td>
                         <td className="py-3 px-4 text-slate-900">
                           {spec.value}

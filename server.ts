@@ -85,7 +85,9 @@ function readSettings(): SiteSettings {
       return {
         siteName: "acheiutil.com",
         tagline: "Achados Úteis com Reviews Reais e os Menores Preços do Mercado Livre",
-        affiliateTag: "acheiutil-20",
+        affiliateTag: "acheiutilbr2659",
+        meliAffiliateTag: "acheiutilbr2659",
+        amazonAffiliateTag: "acheiutil-20",
         contactEmail: "contato@acheiutil.com",
         bannerText: "🔥 Ofertas Exclusivas Mercado Livre: Até 40% OFF com Frete Grátis Full nos produtos selecionados!",
         bannerActive: true,
@@ -97,7 +99,9 @@ function readSettings(): SiteSettings {
     return {
       siteName: "acheiutil.com",
       tagline: "Achados Úteis com Reviews Reais e os Menores Preços do Mercado Livre",
-      affiliateTag: "acheiutil-20",
+      affiliateTag: "acheiutilbr2659",
+      meliAffiliateTag: "acheiutilbr2659",
+      amazonAffiliateTag: "acheiutil-20",
       contactEmail: "contato@acheiutil.com",
       bannerText: "🔥 Ofertas Exclusivas Mercado Livre: Até 40% OFF com Frete Grátis Full nos produtos selecionados!",
       bannerActive: true,
@@ -971,7 +975,7 @@ app.get("/api/mercadolivre/search", async (req, res) => {
 
       const data = await response.json();
       const settings = readSettings();
-      const affiliateTag = settings.affiliateTag || "acheiutil-20";
+      const affiliateTag = settings.meliAffiliateTag || settings.affiliateTag || "acheiutilbr2659";
 
       const items = (data.results || []).map((item: any) => {
         // Build high-res picture URL
@@ -1070,7 +1074,7 @@ app.get("/api/mercadolivre/item/:id", async (req, res) => {
       }
 
       const settings = readSettings();
-      const affiliateTag = settings.affiliateTag || "acheiutil-20";
+      const affiliateTag = settings.meliAffiliateTag || settings.affiliateTag || "acheiutilbr2659";
 
       let affiliateUrl = itemData.permalink || `https://produto.mercadolivre.com.br/MLB-${itemData.id}`;
       if (affiliateUrl.includes("?")) {
@@ -1195,26 +1199,47 @@ Responda ESTRITAMENTE em formato JSON com a seguinte estrutura:
 // Helper for fallback items when ML API has rate limits
 function generateFallbackMLItems(query: string) {
   const qLower = query.toLowerCase();
-  const sampleImages = [
-    "https://images.unsplash.com/photo-1584269600464-37b1b58a9fe7?auto=format&fit=crop&w=800&q=80",
-    "https://images.unsplash.com/photo-1595428774223-ef52624120d2?auto=format&fit=crop&w=800&q=80",
-    "https://images.unsplash.com/photo-1548767797-d8c844163c4c?auto=format&fit=crop&w=800&q=80",
-    "https://images.unsplash.com/photo-1507473885765-e6ed057f782c?auto=format&fit=crop&w=800&q=80",
-  ];
+  const settings = readSettings();
+  const affiliateTag = settings.meliAffiliateTag || settings.affiliateTag || "acheiutilbr2659";
+
+  const isMirror = qLower.includes("espelho");
+  const sampleImages = isMirror
+    ? [
+        "https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?auto=format&fit=crop&w=1200&q=80",
+        "https://images.unsplash.com/photo-1583847268964-b28dc8f51f92?auto=format&fit=crop&w=1000&q=80",
+        "https://images.unsplash.com/photo-1513694203232-719a280e022f?auto=format&fit=crop&w=1000&q=80",
+      ]
+    : [
+        "https://images.unsplash.com/photo-1584269600464-37b1b58a9fe7?auto=format&fit=crop&w=800&q=80",
+        "https://images.unsplash.com/photo-1595428774223-ef52624120d2?auto=format&fit=crop&w=800&q=80",
+        "https://images.unsplash.com/photo-1548767797-d8c844163c4c?auto=format&fit=crop&w=800&q=80",
+      ];
+
+  const itemTitle1 = isMirror
+    ? "Espelho Orgânico Decorativo com LED Luz Quente Lapidado"
+    : `${query.charAt(0).toUpperCase() + query.slice(1)} Premium Edição Oficial`;
+  const itemPrice1 = isMirror ? 245.0 : 149.9;
+  const originalPrice1 = isMirror ? 296.51 : 219.0;
+
+  const itemTitle2 = isMirror
+    ? "Espelho Orgânico Decorativo Grande 80x50cm Lapidação Premium"
+    : `${query.charAt(0).toUpperCase() + query.slice(1)} Inteligente Alta Eficiência`;
+  const itemPrice2 = isMirror ? 179.0 : 89.9;
+  const originalPrice2 = isMirror ? 249.0 : 129.9;
 
   return [
     {
       id: "MLB" + Math.floor(100000000 + Math.random() * 900000000),
-      title: `${query.charAt(0).toUpperCase() + query.slice(1)} Premium Edição Oficial`,
-      price: 149.9,
-      original_price: 219.0,
+      title: itemTitle1,
+      price: itemPrice1,
+      original_price: originalPrice1,
       thumbnail: sampleImages[0],
-      permalink: `https://www.mercadolivre.com.br/busca?q=${encodeURIComponent(query)}&affiliate=acheiutil`,
+      permalink: `https://www.mercadolivre.com.br/busca?q=${encodeURIComponent(query)}&affiliate=${affiliateTag}`,
       condition: "new",
       free_shipping: true,
       isFull: true,
       official_store_name: "Loja Oficial no Mercado Livre",
-      installments: "6x de R$ 24,98 sem juros",
+      installments: isMirror ? "10x de R$ 24,50 sem juros" : "6x de R$ 24,98 sem juros",
       attributes: [
         { name: "Condição", value_name: "Novo" },
         { name: "Garantia", value_name: "12 meses" },
@@ -1222,16 +1247,16 @@ function generateFallbackMLItems(query: string) {
     },
     {
       id: "MLB" + Math.floor(100000000 + Math.random() * 900000000),
-      title: `${query.charAt(0).toUpperCase() + query.slice(1)} Inteligente Alta Eficiência`,
-      price: 89.9,
-      original_price: 129.9,
+      title: itemTitle2,
+      price: itemPrice2,
+      original_price: originalPrice2,
       thumbnail: sampleImages[1],
-      permalink: `https://www.mercadolivre.com.br/busca?q=${encodeURIComponent(query)}&affiliate=acheiutil`,
+      permalink: `https://www.mercadolivre.com.br/busca?q=${encodeURIComponent(query)}&affiliate=${affiliateTag}`,
       condition: "new",
       free_shipping: true,
       isFull: true,
       official_store_name: "Mercado Líder Platinum",
-      installments: "3x de R$ 29,97 sem juros",
+      installments: isMirror ? "12x de R$ 14,92 sem juros" : "3x de R$ 29,97 sem juros",
       attributes: [
         { name: "Marca", value_name: "TopSeller" },
         { name: "Material", value_name: "Reforçado" },

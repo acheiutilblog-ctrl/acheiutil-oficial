@@ -156,6 +156,17 @@ export const SocialAutomationSection: React.FC<SocialAutomationSectionProps> = (
                 <p className="text-indigo-800/80 leading-relaxed text-[11px]">
                   Permite conectar sua <b>Página do Facebook, Instagram, Pinterest e X</b> em uma só conta. Você adiciona o seu Feed RSS (`{rssFeedUrl}`) e ele publica automaticamente sempre que tiver um review novo!
                 </p>
+
+                {/* Important notice about repeated posts */}
+                <div className="mt-2 p-2.5 rounded-lg bg-amber-100/70 border border-amber-200 text-[11px] text-amber-900">
+                  <p className="font-bold flex items-center gap-1 text-amber-950 mb-0.5">
+                    ⚠️ Atenção para não repetir posts no Facebook:
+                  </p>
+                  <p className="leading-relaxed">
+                    No Metricool, ao criar ou editar a sua <b>Autolista</b>, certifique-se de <b>DESATIVAR</b> a opção <b>"Repetir autolista" (Circular)</b>. Se essa opção estiver ligada, o Metricool fica postando os mesmos produtos em loop infinito a cada 12h ou 24h.
+                  </p>
+                </div>
+
                 <a
                   href="https://metricool.com/pt-br/"
                   target="_blank"

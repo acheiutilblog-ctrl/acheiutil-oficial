@@ -59,7 +59,9 @@ export interface Product {
 export interface SiteSettings {
   siteName: string;
   tagline: string;
-  affiliateTag: string;
+  affiliateTag: string; // Mercado Livre primary tag (e.g. acheiutilbr2659)
+  meliAffiliateTag?: string; // Etiqueta oficial Mercado Livre (e.g. acheiutilbr2659)
+  amazonAffiliateTag?: string; // Tag Amazon Associados (e.g. acheiutil-20)
   contactEmail: string;
   whatsappNotice?: string;
   bannerText: string;

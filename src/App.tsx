@@ -14,12 +14,21 @@ import { CookieConsent } from './components/CookieConsent';
 import { ShareRecommendationBox } from './components/ShareRecommendationBox';
 import { Product, ProductCategory, SiteSettings, InstitutionalTab } from './types';
 import { updatePageSEO } from './lib/seo';
+import {
+  fetchProductsFromFirestore,
+  subscribeToProducts,
+  fetchSettingsFromFirestore,
+  saveSettingsToFirestore,
+  testConnection,
+} from './lib/firebase';
 import { Zap, Flame, Sparkles, RefreshCw, Settings, LogOut, ArrowUp, ChevronLeft, ChevronRight } from 'lucide-react';
 
 export default function App() {
   const [products, setProducts] = useState<Product[]>([]);
   const [settings, setSettings] = useState<SiteSettings>({
-    affiliateTag: 'acheiutil-20',
+    affiliateTag: 'acheiutilbr2659',
+    meliAffiliateTag: 'acheiutilbr2659',
+    amazonAffiliateTag: 'acheiutil-20',
     siteName: 'acheiutil.com',
     tagline: 'Achados Úteis no Mercado Livre',
     bannerText: '🔥 Ofertas Exclusivas Mercado Livre: Até 40% OFF com Frete Grátis Full nos produtos selecionados!',
@@ -193,8 +202,20 @@ export default function App() {
   }, [isAdminAuthenticated, products, currentView]);
 
 
-  // Fetch initial data from server API with static fallback for Vercel / Netlify
+  // Fetch initial data from Firestore, then server API, with static fallback for Vercel / Netlify
   const fetchProducts = async () => {
+    // 1. Primary: Cloud Firestore (real-time cloud database)
+    try {
+      const firestoreList = await fetchProductsFromFirestore();
+      if (Array.isArray(firestoreList) && firestoreList.length > 0) {
+        setProducts(firestoreList);
+        return;
+      }
+    } catch (fsErr) {
+      console.warn('Firestore fetch fallback, trying local API or static data:', fsErr);
+    }
+
+    // 2. Secondary: Local express API if running
     try {
       const res = await fetch('/api/products');
       if (res.ok) {
@@ -209,7 +230,7 @@ export default function App() {
       console.warn('API /api/products not available, falling back to static data:', err);
     }
 
-    // Static fallback if API is not hosted (e.g. Vercel static, Cloudflare Pages, Netlify)
+    // 3. Static fallback
     try {
       const fallbackRes = await fetch('/data/products.json');
       if (fallbackRes.ok) {
@@ -224,6 +245,18 @@ export default function App() {
   };
 
   const fetchSettings = async () => {
+    // 1. Try Firestore
+    try {
+      const fsSettings = await fetchSettingsFromFirestore();
+      if (fsSettings) {
+        setSettings((prev) => ({ ...prev, ...fsSettings }));
+        return;
+      }
+    } catch {
+      // ignore
+    }
+
+    // 2. Try server API
     try {
       const res = await fetch('/api/settings');
       if (res.ok) {
@@ -238,7 +271,7 @@ export default function App() {
       console.warn('API /api/settings not available, falling back to static settings:', err);
     }
 
-    // Static fallback
+    // 3. Static fallback & localStorage
     try {
       const savedBackup = localStorage.getItem('acheiutil_settings_backup');
       if (savedBackup) {
@@ -261,8 +294,20 @@ export default function App() {
       setLoading(true);
       await Promise.all([fetchProducts(), fetchSettings()]);
       setLoading(false);
+      testConnection().catch(() => {});
     };
     init();
+
+    // Subscribe to real-time Firestore database updates
+    const unsubscribe = subscribeToProducts((list) => {
+      if (Array.isArray(list) && list.length > 0) {
+        setProducts(list);
+      }
+    });
+
+    return () => {
+      unsubscribe();
+    };
   }, []);
 
   // Ensure browser tab favicon strictly uses the maximized detective logo
@@ -365,8 +410,23 @@ export default function App() {
         if (sortOption === 'price-desc') {
           return b.price - a.price;
         }
-        // default recent: by created date or id
-        return (new Date(b.createdAt || 0).getTime()) - (new Date(a.createdAt || 0).getTime());
+        // default recent: newest products first (by createdAt, date, or numeric ID)
+        const getTimeOrId = (p: Product) => {
+          if (p.createdAt) {
+            const t = new Date(p.createdAt).getTime();
+            if (!isNaN(t) && t > 0) return t;
+          }
+          if ((p as any).date) {
+            const t = new Date((p as any).date).getTime();
+            if (!isNaN(t) && t > 0) return t;
+          }
+          const numId = parseInt(p.id.replace(/\D/g, ''), 10);
+          if (!isNaN(numId) && numId > 0) {
+            return 1750000000000 + numId * 1000000;
+          }
+          return 0;
+        };
+        return getTimeOrId(b) - getTimeOrId(a);
       });
   }, [products, currentCategory, searchTerm, sortOption]);
 
@@ -401,6 +461,12 @@ export default function App() {
       localStorage.setItem('acheiutil_settings_backup', JSON.stringify(newSettings));
     } catch {
       // ignore
+    }
+
+    try {
+      await saveSettingsToFirestore(newSettings);
+    } catch (fsErr) {
+      console.warn('Could not save settings to Firestore:', fsErr);
     }
 
     try {
@@ -605,6 +671,19 @@ export default function App() {
               onSelectRelated={handleSelectProduct}
               relatedProducts={relatedProducts}
             />
+          )}
+
+          {currentView === 'review' && !selectedProduct && (
+            <div className="max-w-3xl mx-auto py-20 px-4 text-center">
+              <h2 className="text-2xl font-bold text-slate-800 mb-2">Artigo ou Produto não encontrado</h2>
+              <p className="text-slate-600 mb-6 text-sm">O conteúdo que você procura pode ter sido movido, ou o link está em atualização.</p>
+              <button
+                onClick={handleGoHome}
+                className="px-6 py-2.5 bg-orange-500 hover:bg-orange-600 text-white font-bold rounded-xl text-sm transition-all cursor-pointer shadow-md shadow-orange-500/20"
+              >
+                Voltar para a Página Inicial
+              </button>
+            </div>
           )}
 
           {/* ================= VIEW: HOME & CATALOG ================= */}

@@ -31,8 +31,11 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, onSelect }) =
     window.open(`https://api.whatsapp.com/send?text=${text}`, '_blank');
   };
 
-  const formatBRL = (val: number) => {
-    return val.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+  const formatBRL = (val: number | string | undefined | null) => {
+    if (val === undefined || val === null) return 'R$ 0,00';
+    const num = typeof val === 'number' ? val : parseFloat(String(val).replace(/\./g, '').replace(',', '.'));
+    if (isNaN(num)) return 'R$ 0,00';
+    return num.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
   };
 
   const cleanSnippet = (text?: string) => {

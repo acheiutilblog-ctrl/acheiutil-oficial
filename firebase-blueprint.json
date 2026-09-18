@@ -1,0 +1,66 @@
+{
+  "entities": {
+    "Product": {
+      "title": "Product",
+      "description": "A curated affiliate product review or recommendation item",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "description": "Unique identifier for the product" },
+        "slug": { "type": "string", "description": "URL slug for the product" },
+        "title": { "type": "string", "description": "Display title of the product" },
+        "subtitle": { "type": "string", "description": "Optional subtitle" },
+        "category": { "type": "string", "description": "Category key: casa, utilidades, decoracao, pet" },
+        "subcategory": { "type": "string", "description": "Subcategory name" },
+        "price": { "type": "number", "description": "Product price in BRL" },
+        "originalPrice": { "type": "number", "description": "Original price before discount" },
+        "discountPercentage": { "type": "number", "description": "Discount percentage" },
+        "installments": { "type": "string", "description": "Installment text e.g. 10x de R$ 19,90" },
+        "rating": { "type": "number", "description": "Rating score 0 to 5" },
+        "reviewCount": { "type": "number", "description": "Number of reviews" },
+        "freeShipping": { "type": "boolean", "description": "Whether free shipping applies" },
+        "isFull": { "type": "boolean", "description": "Mercado Livre Full shipping indicator" },
+        "officialStore": { "type": "string", "description": "Name of the official store" },
+        "affiliateUrl": { "type": "string", "description": "Affiliate referral link" },
+        "images": { "type": "array", "description": "Array of image URLs" },
+        "summary": { "type": "string", "description": "Short product summary" },
+        "reviewContent": { "type": "string", "description": "Full HTML or markdown review content" },
+        "pros": { "type": "array", "description": "List of positive aspects" },
+        "cons": { "type": "array", "description": "List of drawbacks" },
+        "verdict": { "type": "object", "description": "Verdict score and summary" },
+        "specifications": { "type": "array", "description": "Key specs list" },
+        "faqs": { "type": "array", "description": "Frequently asked questions" },
+        "featured": { "type": "boolean", "description": "Featured on home page" },
+        "dealOfTheDay": { "type": "boolean", "description": "Featured as deal of the day" },
+        "bestSeller": { "type": "boolean", "description": "Best seller badge" },
+        "createdAt": { "type": "string", "format": "date-time", "description": "Creation ISO date" },
+        "updatedAt": { "type": "string", "format": "date-time", "description": "Last updated ISO date" }
+      },
+      "required": ["id", "slug", "title", "category", "price", "affiliateUrl"]
+    },
+    "SiteSettings": {
+      "title": "SiteSettings",
+      "description": "Global website configuration and settings",
+      "type": "object",
+      "properties": {
+        "siteName": { "type": "string", "description": "Name of the website" },
+        "tagline": { "type": "string", "description": "Tagline" },
+        "affiliateTag": { "type": "string", "description": "Affiliate tag code" },
+        "contactEmail": { "type": "string", "description": "Contact email" },
+        "bannerText": { "type": "string", "description": "Top announcement text" },
+        "bannerActive": { "type": "boolean", "description": "Whether banner is visible" },
+        "adminPin": { "type": "string", "description": "Hashed or configured admin PIN" }
+      },
+      "required": ["siteName"]
+    }
+  },
+  "firestore": {
+    "/products/{productId}": {
+      "schema": "Product",
+      "description": "Public collection of reviewed products and recommendations"
+    },
+    "/settings/{settingId}": {
+      "schema": "SiteSettings",
+      "description": "Configuration document for site settings"
+    }
+  }
+}

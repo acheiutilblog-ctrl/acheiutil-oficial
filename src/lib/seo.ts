@@ -6,10 +6,13 @@ export function updatePageSEO(product?: Product, categoryTitle?: string) {
   if (product) {
     document.title = `${product.title} - Vale a Pena? Review Sincera | acheiutil.com`;
     
+    const safeSummary = product.summary || product.subtitle || product.title || "";
+    const summaryExcerpt = safeSummary.slice(0, 160);
+
     // Meta description
     let metaDesc = document.querySelector('meta[name="description"]');
     if (metaDesc) {
-      metaDesc.setAttribute("content", product.summary.slice(0, 160));
+      metaDesc.setAttribute("content", summaryExcerpt);
     }
 
     // OpenGraph & Canonical
@@ -21,7 +24,7 @@ export function updatePageSEO(product?: Product, categoryTitle?: string) {
     if (ogTitle) ogTitle.setAttribute("content", `${product.title} - Review e Menor Preço`);
 
     const ogDesc = document.querySelector('meta[property="og:description"]');
-    if (ogDesc) ogDesc.setAttribute("content", product.summary.slice(0, 160));
+    if (ogDesc) ogDesc.setAttribute("content", summaryExcerpt);
 
     const ogUrl = document.querySelector('meta[property="og:url"]');
     if (ogUrl) ogUrl.setAttribute("content", canonicalUrl);
@@ -43,21 +46,25 @@ export function updatePageSEO(product?: Product, categoryTitle?: string) {
       document.head.appendChild(scriptTag);
     }
 
+    const verdictScore = typeof product.verdict === 'object' && product.verdict?.score 
+      ? (product.verdict.score / 2).toFixed(1) 
+      : "4.8";
+
     const schemaData = {
       "@context": "https://schema.org/",
       "@type": "Product",
       name: product.title,
       image: product.images,
-      description: product.summary,
+      description: safeSummary,
       brand: {
         "@type": "Brand",
-        name: product.specifications?.find((s) => s.label.toLowerCase() === "marca")?.value || "Mercado Livre",
+        name: product.specifications?.find((s) => (s.label || (s as any).name || "").toLowerCase() === "marca")?.value || "Mercado Livre",
       },
       offers: {
         "@type": "Offer",
         url: product.affiliateUrl,
         priceCurrency: "BRL",
-        price: product.price,
+        price: typeof product.price === 'number' ? product.price : parseFloat(String(product.price || 0).replace(',', '.')),
         availability: "https://schema.org/InStock",
         seller: {
           "@type": "Organization",
@@ -75,14 +82,14 @@ export function updatePageSEO(product?: Product, categoryTitle?: string) {
         "@type": "Review",
         reviewRating: {
           "@type": "Rating",
-          ratingValue: product.verdict?.score ? (product.verdict.score / 2).toFixed(1) : "4.8",
+          ratingValue: verdictScore,
           bestRating: "5",
         },
         author: {
           "@type": "Organization",
           name: "acheiutil.com Equipe Editorial",
         },
-        reviewBody: product.reviewContent?.slice(0, 300) || product.summary,
+        reviewBody: product.reviewContent?.slice(0, 300) || safeSummary,
       },
     };
 
