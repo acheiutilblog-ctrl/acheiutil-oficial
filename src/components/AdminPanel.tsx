@@ -1497,7 +1497,7 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({
                   )}
                 </div>
                 <p className="text-[11px] text-slate-500 mt-1">
-                  💡 <b>Dica:</b> Cole aqui o link curto exato gerado no Mercado Livre (como <code className="text-orange-600 bg-orange-50 px-1 py-0.5 rounded">https://meli.la/xyz</code>) para levar o visitante direto para este produto específico.
+                  ⚠️ <b>IMPORTANTE:</b> Cole aqui o seu link real de afiliado do Mercado Livre (ex: link curto <code className="text-orange-600 bg-orange-50 px-1 py-0.5 rounded font-bold">https://meli.la/...</code> ou link do produto). O link de busca pré-preenchido é apenas uma referência.
                 </p>
               </div>
 
