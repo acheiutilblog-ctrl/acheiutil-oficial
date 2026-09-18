@@ -12,7 +12,15 @@ import {
   Firestore,
 } from 'firebase/firestore';
 import type { Product, SiteSettings } from '../types';
-import firebaseConfig from '../../firebase-applet-config.json';
+const firebaseConfig = {
+  projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID || 'gen-lang-client-0908329024',
+  appId: import.meta.env.VITE_FIREBASE_APP_ID || '1:223732690666:web:234f752d2868ff8bca3193',
+  apiKey: import.meta.env.VITE_FIREBASE_API_KEY || 'AIzaSyCmnlQrAYS5Ii20KG_dZ-2iL4iv6BsETUQ',
+  authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN || 'gen-lang-client-0908329024.firebaseapp.com',
+  firestoreDatabaseId: import.meta.env.VITE_FIREBASE_DATABASE_ID || 'ai-studio-acheiutilcom-a2f4d3a2-58a5-4ae7-900b-fa040ce3c56a',
+  storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET || 'gen-lang-client-0908329024.firebasestorage.app',
+  messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID || '223732690666'
+};
 
 const app = !getApps().length ? initializeApp(firebaseConfig) : getApp();
 
